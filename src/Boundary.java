@@ -9,7 +9,7 @@ public class Boundary {
     }
 
     //getter method to return value whenever called.
-    public intgetWidth(){
+    public int getWidth(){
         return width;
     }
 
