@@ -35,7 +35,7 @@ public class Land {
                     while ((inv.getVertical_step()!= boundary.getWidth()+1)){
                         
                         int duration = 0;
-                        //duration is used to calcuate the duration of calculating the time to cross the border.
+                        //duration is used to calculate the duration of calculating the time to cross the border.
 
                         if (time.getTime()%10==0) {
                             //sensor will take decision at every 10 seconds.
