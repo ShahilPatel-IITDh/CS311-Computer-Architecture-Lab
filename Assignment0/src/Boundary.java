@@ -1,3 +1,5 @@
+
+// import java.util.Random;
 public class Boundary {
     //class which will provide length and width of boundary whenever asked from Main class i.e. Land class
     private int width;  //value assigned using Boundary package
