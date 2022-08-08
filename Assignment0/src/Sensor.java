@@ -1,32 +1,96 @@
-//importing package to generate random numbers
-import java.util.Random;
+//package to generate random numbers.
+import java.lang.Math;
 
 public class Sensor {
 
-    private boolean switched;
-    Sensor(){
-        this.switched = false;   //setting the initial set of Sensor to OFF. //Here false = OFF and true = ON
+    private double probability; //variable to store the probability values.
+    
+    //constructor for sensor.
+    public Sensor(double probability) {
+        this.probability = probability;
     }
-    //method (function) to generate the random numbers according to given parameters.
-    public int randomNumberInRange(int min, int max){
-        Random random = new Random();
-        return random.nextInt((max-min)+1)+min;  //bounding the next random integer that will be generated.
-    }
-
-    //set the state of Sensors (On/Off)
-    public boolean getSwitch(){
-        return switched; //return the state of the switch when called.
+    
+    //getter for Probability value.
+    public double getP() {
+        return probability;
     }
 
-    public void setSwitched(boolean state){
-        this.switched = state; //given the state as parameter, this will set the state of Switch to the specified state.
+    //setter for Probability value.
+    public void setP(double probability) {
+        this.probability = probability;
     }
 
-    //using probability to change the state of the switch
-    public void setSwitch(float temp){
-        int x = 10-(int)temp*10; //temp is the given probabilistic value
-        int y = randomNumberInRange(1,10);
-        setSwitched(y<x); //need to verify if condition is y>x or y<x;
+    private int sensorA,sensorB, sensorC, sensorD; //sensors to take decision regarding the movement of Invader.
+    
+    public void takeDecision(){
+       
+        double stateC =  Math.random();
+        double stateD =  Math.random();
+        double stateA =  Math.random();
+        double stateB =  Math.random();
+        
+        //if random integer A is less than probability value then the sensor will be ON else OFF.
+        
+        if (stateD<probability){
+            setSensorD(1);
+        }
+        else {
+            setSensorD(0);
+        }
+
+        if (stateC<probability){
+            setSensorC(1);
+        }
+        else {
+            setSensorC(0);
+        }
+
+        if (stateB<probability){
+            setSensorB(1);
+        }
+        else {
+            setSensorB(0);
+        }
+
+        if (stateA<probability){
+            setSensorA(1);
+        }
+        else {
+            setSensorA(0);
+        }
     }
 
+    //getter for sensors
+    public int getSensorA() {
+        return sensorA;
+    }
+
+    // setter for sensors
+    public void setSensorA(int sensorA) {
+        this.sensorA = sensorA;
+    }
+
+    public int getSensorB() {
+        return sensorB;
+    }
+
+    public void setSensorB(int sensorB) {
+        this.sensorB = sensorB;
+    }
+
+    public int getSensorC() {
+        return sensorC;
+    }
+
+    public void setSensorC(int sensorC) {
+        this.sensorC = sensorC;
+    }
+
+    public int getSensorD() {
+        return sensorD;
+    }
+
+    public void setSensorD(int sensorD) {
+        this.sensorD = sensorD;
+    }
 }
