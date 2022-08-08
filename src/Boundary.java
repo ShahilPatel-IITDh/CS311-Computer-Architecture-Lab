@@ -8,6 +8,7 @@ public class Boundary {
         this.length = l; //l = length
     }
 
+
     //getter method to return value whenever called.
     public int getWidth(){
         return width;
