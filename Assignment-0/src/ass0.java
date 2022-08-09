@@ -8,14 +8,14 @@ public class ass0{
     {
         // System.out.println("Hello Java");
 
-        File newObj = new File("Output.txt"); //csv file will be used to store the data points
+        File newObj = new File("./Assignment-0/src/Output.txt"); //csv file will be used to store the data points
             if(newObj.createNewFile()){
                 System.out.println("File generated: "+ newObj.getName()); //Returns name of the file created successfully.
             }
             else{
                 System.out.println("File already exists"); //If the file with same name is already present
             }
-            FileWriter writer = new FileWriter("Output.txt");
+            FileWriter writer = new FileWriter("./Assignment-0/src/Output.txt");
         for(float prob=0.12f;prob<0.80;prob+=0.04)
         {
             for(int width=2;width<50;width+=2)
