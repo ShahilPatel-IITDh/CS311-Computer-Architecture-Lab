@@ -1,10 +1,10 @@
 public class sensor
 {    
     float p;
-    border bord;
+    public border bord;
     public void Create()
     {
-        bord = new border();
+        public bord = new border();
         // bord.l = 1000;
         // bord.w = w;     // bord.w will be provided through ass0.java
         for(int i=0;i<3;i++)
