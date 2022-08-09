@@ -42,8 +42,8 @@ public class infiltrator extends sensor
         }
         this.stop = true;
     }
-    public void main(String args[])
-    {
+    // public void main(String args[])
+    // {
 
-    }
+    // }
 }
