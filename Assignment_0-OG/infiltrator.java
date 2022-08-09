@@ -19,7 +19,7 @@ public class infiltrator extends sensor
     public void Move()
     {
         // bord.l = 1000;
-        while((x<=1000 && x!=0) && (y<=w && y>=0))
+        while((x<=5000 && x!=0) && (y<=w && y>=0))
         {
             time.t+=10; 
             sensor sens = new sensor();
