@@ -22,19 +22,20 @@ public class ass0{
         //writer variable will be used to write in the output file.
         FileWriter writer = new FileWriter("Output.csv");
         
-        //we will be using for loop to give value to probability (prob) variable
-        for(float prob=0.02f;prob<0.98;prob+=0.02){
+        //we will be using for loop to give value to probability (prob) variable with jump of 0.02
+        for(float prob=0.02f; prob<=0.98; prob+=0.02){
 
             //different width values for same probability value will hep to generate average time.
             //jump in width = 10 units
             //initial width = 10 units, final = 200 
-            for(int width=10;width<200;width+=10){
+            for(int width=10; width<=200; width+=10){
 
                 int[] arr = new int[5];   //array to store time
 
                 for(int times=0;times<5;times++){
                     
                     //giving arguments as (length, probability, width) respectively
+                    //length value = 5000
                     infiltrator Attacking_country = new infiltrator(5000,prob,width);
                     
                     Attacking_country.Move();
