@@ -93,7 +93,7 @@ def evaluate(submitted_program):
 			else:
 				print(cur_file + "\t: Fail")
 #debug print
-			debug = False
+			debug = True
 			if debug == True:
 				print("testcase = " + cur_file)
 				print("\n output expected to contain = ")
