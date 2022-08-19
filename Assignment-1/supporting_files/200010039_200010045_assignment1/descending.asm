@@ -16,21 +16,21 @@ main:
 	load %x0, $n, %x3
 	add %x0, %x0, %x4
 	add %x0, %x0, %x5
-lop:
+check:
 	sub %x5, %x5, %x5
 	sub %x3, %x4, %x6
 	subi %x6, 1, %x6
-	beq %x4, %x3, endl
+	beq %x4, %x3, terminate
 	addi %x4, 1, %x4
 	jmp loop
 loop:
-	beq %x5, %x6, lop
+	beq %x5, %x6, check
 	load %x5, $a, %x7
 	addi %x5, 1, %9
 	load %x9, $a, %x8
-	blt %x7, %x8, interc
+	blt %x7, %x8, interchange
 	jmp lin
-interc:
+interchange:
 	add %x0, %x8, %x10
 	sub %x8, %x8, %x8
 	add %x0, %x7, %x8
@@ -46,5 +46,5 @@ lin:
 	sub %x9, %x9, %x9
 	sub %x10, %x10, %x10
 	jmp loop
-endl:
+terminate:
 	end
