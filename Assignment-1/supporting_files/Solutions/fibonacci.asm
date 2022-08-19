@@ -3,7 +3,7 @@ n:
 	10
 	.text
 main:
-	addi %x0, 500, %x7
+	addi %x0, 65535, %x7
 	add %x0, %x0, %x5
 	store %x5, 0, %x7
 	subi %x7, 1, %x7
