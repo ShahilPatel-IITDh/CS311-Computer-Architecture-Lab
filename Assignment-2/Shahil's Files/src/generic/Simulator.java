@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Simulator {
-		
+public class Simulator 
+{
 	static FileInputStream inputcodeStream = null;
 	
 	public static void setupSimulation(String assemblyProgramFile)
@@ -69,7 +69,6 @@ public class Simulator {
 			inst.put("bne", "11010");
 			
 
-
 			//mapping register key values to binary strings
 			
 			reg.put(5, "00101");
@@ -113,27 +112,29 @@ public class Simulator {
 			}
 			
 			String x = ""; //initialize an empty string 
+			// Initialising counter j
 			int j=0;
 			while(j<ParsedProgram.code.size()){
 
-				int kgp=0;
+				int kgp=0;//Counter
 
-				String gen_inst = ParsedProgram.code.get(j).getOperationType().toString();
+				String gen_inst = ParsedProgram.code.get(j).getOperationType().toString(); String genr="";
 				
-				//now compare the gen_inst (generate inst) with various inst keys
-				if(gen_inst.equals("jmp")){
+				// Now compare the gen_inst (generate inst) with various inst keys
+				if(gen_inst == "jmp"){
 
-					//concate the 'value' from hashtable for the 'key' which the parsedProgram.code instruction returns
+					// Concate the 'value' from hashtable for the 'key' which the parsedProgram.code instruction returns
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
 					x = x.concat("00000");
 					
-					//pc is the abbreviation for program counter
+					// PC is the abbreviation for program counter
 					int pc = ParsedProgram.code.get(j).programCounter; //get the current program counter from parsed program files.
 					
 					int jk = 0;
-
+					
+					// Checking Whether the program is functioning correct or not
 					if(kgp==10){
-						int temp = ParsedProgram.code.size();
+						int temp = ParsedProgram.code.size();//Initialising
 						temp/=10;
 						temp++;
 					}
@@ -156,6 +157,7 @@ public class Simulator {
 						String c = Integer.toBinaryString(value);
 						int limit = c.length();
 						String repeat = "";
+						genr.concat("0");
 						if ((22 - limit) != 0) {
 							String s = "0";
 							int q = 22 - limit;
@@ -166,25 +168,26 @@ public class Simulator {
 					}
 				}
 
-				//code for load and store instructions
-				if(gen_inst.equals("load") || gen_inst.equals("store")){
+				// Code for load and store instructions
+				if((gen_inst == "load") || gen_inst ==("store")){
 					
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
 					
-					//if the source is from register.
-					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString().equals("Register")) {
+					// If the source is from register.
+					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString() == "Register") {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand1.value));
 					}
 
-					//if the destination is register.
-					if (ParsedProgram.code.get(j).destinationOperand.operandType.toString().equals("Register")) {
+					// If the destination is register.
+					if (ParsedProgram.code.get(j).destinationOperand.operandType.toString() == "Register") {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).destinationOperand.value));
 					}
 
 
-					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString().equals("Label")) {
+					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString() == "Label") {
 						String immediate = ParsedProgram.code.get(j).sourceOperand2.labelValue;
 						int im_int = ParsedProgram.symtab.get(immediate);
+						String jade="";
 						String imm = Integer.toBinaryString(im_int);
 						int limit = imm.length();
 						String repeat = "";
@@ -200,7 +203,7 @@ public class Simulator {
 					}
 
 
-					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString().equals("Immediate")) {
+					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString() == "Immediate") {
 						int im_int = ParsedProgram.code.get(j).sourceOperand2.value;
 						
 						String immediate = Integer.toBinaryString(im_int);
@@ -216,20 +219,20 @@ public class Simulator {
 					}
 				}
 
-				if (gen_inst.equals("add") || gen_inst.equals("sub") || gen_inst.equals("mul") || gen_inst.equals("div") || gen_inst.equals("and") || gen_inst.equals("or") || gen_inst.equals("xor") || gen_inst.equals("slt") || gen_inst.equals("sll") || gen_inst.equals("srl") || gen_inst.equals("sra")) {
+				if (gen_inst == "add" || gen_inst == "sub" || gen_inst == "mul" || gen_inst == "div" || gen_inst == "and" || gen_inst=="or" || gen_inst=="xor" || gen_inst=="slt" || gen_inst=="sll" || gen_inst=="srl" || gen_inst=="sra") {
 
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
 					
 
-					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString().equals("Register")) {
+					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString()=="Register") {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand1.value));
 					}
 
-					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString().equals("Register")) {
+					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString()=="Register") {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand2.value));
 					}
 
-					if (ParsedProgram.code.get(j).destinationOperand.operandType.toString().equals("Register")) {
+					if (ParsedProgram.code.get(j).destinationOperand.operandType.toString()=="Register") {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).destinationOperand.value));
 					}
 
@@ -237,19 +240,19 @@ public class Simulator {
 				}
 
 
-				if (gen_inst.equals("subi") || gen_inst.equals("addi") || gen_inst.equals("muli") || gen_inst.equals("divi") || gen_inst.equals("andi") || gen_inst.equals("ori") || gen_inst.equals("xori") || gen_inst.equals("slti") || gen_inst.equals("slli") || gen_inst.equals("srli") || gen_inst.equals("srai")) {
+				if (gen_inst=="subi" || gen_inst=="addi" || gen_inst=="muli" || gen_inst=="divi" || gen_inst=="andi" || gen_inst.equals("ori") || gen_inst.equals("xori") || gen_inst.equals("slti") || gen_inst.equals("slli") || gen_inst.equals("srli") || gen_inst.equals("srai")) {
 
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
 
-					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString().equals("Register")) {
+					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString()=="Register") {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand1.value));
 					}
 
-					if (ParsedProgram.code.get(j).destinationOperand.operandType.toString().equals("Register")) {
+					if (ParsedProgram.code.get(j).destinationOperand.operandType.toString()=="Register") {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).destinationOperand.value));
 					}
 
-					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString().equals("Immediate")) {
+					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString()=="Immediate") {
 						int immediate = ParsedProgram.code.get(j).sourceOperand2.value;
 						String imm = Integer.toBinaryString(immediate);
 						int limit = imm.length();
@@ -264,26 +267,26 @@ public class Simulator {
 					}
 				}
 
-				if (gen_inst.equals("beq") || gen_inst.equals("bgt") || gen_inst.equals("bne") || gen_inst.equals("blt")) {
+				if (gen_inst =="beq" || gen_inst=="bgt" || gen_inst=="bne" || gen_inst=="blt") {
 
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
 
 
-					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString().equals("Register")) {
+					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString()=="Register") {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand1.value));
 					}
 
-					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString().equals("Register")) {
+					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString()=="Register") {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand2.value));
 					}
 
 					int n = 0;
 
-					if(ParsedProgram.code.get(j).destinationOperand.operandType.toString().equals("Label")){
+					if(ParsedProgram.code.get(j).destinationOperand.operandType.toString()=="Label"){
 						n = ParsedProgram.symtab.get(ParsedProgram.code.get(j).destinationOperand.labelValue) - ParsedProgram.code.get(j).programCounter;
 					}
 					
-					if(ParsedProgram.code.get(j).destinationOperand.operandType.toString().equals("Immediate")){
+					if(ParsedProgram.code.get(j).destinationOperand.operandType.toString()=="Immediate"){
 						n = ParsedProgram.code.get(j).destinationOperand.value - ParsedProgram.code.get(j).programCounter;
 					}
 
@@ -291,9 +294,11 @@ public class Simulator {
 					if (n >= 0) {
 
 						String n_str = Integer.toBinaryString(n);
-						int str_len = n_str.length();
+						int str_len = 0;
+						str_len = str_len + n_str.length();
 
 						String npRepeated = "";
+						String noprob = "";
 
 						if ((17 - str_len) != 0) {
 							String so = "0";
@@ -325,10 +330,12 @@ public class Simulator {
 
 				if (gen_inst.equals("end")) {
 					x = x.concat("11101000000000000000000000000000");
+					String church = "I";
 				}
 				int inst_map = (int) Long.parseLong(x, 2);
 				
 				byte[] inst_bitmap = ByteBuffer.allocate(4).putInt(inst_map).array();
+				// 
 				bos.write(inst_bitmap);
 				x="";						
 		}
