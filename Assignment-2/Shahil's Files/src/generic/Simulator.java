@@ -3,6 +3,7 @@ package generic;
 import java.io.*;
 import java.io.FileInputStream;
 import java.util.Hashtable;
+import java.util.function.BinaryOperator;
 import java.nio.ByteBuffer;
 import java.io.FileOutputStream;
 import generic.Operand.OperandType;
@@ -120,8 +121,10 @@ public class Simulator {
 
 				String gen_inst = ParsedProgram.code.get(j).getOperationType().toString();
 				
+				String binary_String =  inst.get(gen_inst);
+
 				//now compare the gen_inst (generate inst) with various inst keys
-				if(gen_inst.equals("jmp")){
+				if(binary_String =="11000"){
 
 					//concate the 'value' from hashtable for the 'key' which the parsedProgram.code instruction returns
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
@@ -144,6 +147,7 @@ public class Simulator {
 					if(ParsedProgram.code.get(j).destinationOperand.operandType.toString().equals("Immediate")){
 						jk = ParsedProgram.code.get(j).destinationOperand.value;
 					}
+
 					int value = jk - pc;
 
 					if (value < 0) {
@@ -167,7 +171,7 @@ public class Simulator {
 				}
 
 				//code for load and store instructions
-				if(gen_inst.equals("load") || gen_inst.equals("store")){
+				if(binary_String=="10110" || binary_String=="10111"){
 					
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
 					
@@ -216,11 +220,9 @@ public class Simulator {
 					}
 				}
 
-				if (gen_inst.equals("add") || gen_inst.equals("sub") || gen_inst.equals("mul") || gen_inst.equals("div") || gen_inst.equals("and") || gen_inst.equals("or") || gen_inst.equals("xor") || gen_inst.equals("slt") || gen_inst.equals("sll") || gen_inst.equals("srl") || gen_inst.equals("sra")) {
 
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
 					
-
 					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString().equals("Register")) {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand1.value));
 					}
@@ -237,7 +239,7 @@ public class Simulator {
 				}
 
 
-				if (gen_inst.equals("subi") || gen_inst.equals("addi") || gen_inst.equals("muli") || gen_inst.equals("divi") || gen_inst.equals("andi") || gen_inst.equals("ori") || gen_inst.equals("xori") || gen_inst.equals("slti") || gen_inst.equals("slli") || gen_inst.equals("srli") || gen_inst.equals("srai")) {
+				if (binary_String=="00011" || binary_String=="00001" || binary_String=="00101" || binary_String=="00111" || binary_String=="01001" || binary_String=="01011" || binary_String=="01101" || binary_String=="01111" || binary_String=="10001" || binary_String=="10011" || binary_String=="10101") {
 
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
 
@@ -264,10 +266,9 @@ public class Simulator {
 					}
 				}
 
-				if (gen_inst.equals("beq") || gen_inst.equals("bgt") || gen_inst.equals("bne") || gen_inst.equals("blt")) {
+				if (binary_String=="11001" || binary_String=="11100" || binary_String=="11010" || binary_String=="11011") {
 
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
-
 
 					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString().equals("Register")) {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand1.value));
@@ -323,7 +324,7 @@ public class Simulator {
 				j++; //incrementing the value of j.
 
 
-				if (gen_inst.equals("end")) {
+				if (get_inst=="end") {
 					x = x.concat("11101000000000000000000000000000");
 				}
 				int inst_map = (int) Long.parseLong(x, 2);
