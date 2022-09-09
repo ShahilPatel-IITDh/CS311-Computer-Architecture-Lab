@@ -4,8 +4,11 @@ import java.io.*;
 import java.io.FileInputStream;
 import java.util.Hashtable;
 import java.nio.ByteBuffer;
-
+import java.io.FileOutputStream;
 import generic.Operand.OperandType;
+import java.io.IOException;
+
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Simulator {
@@ -57,26 +60,28 @@ public class Simulator {
 			inst.put("slli", "10001");
 			inst.put("srli", "10011");
 			inst.put("srai", "10101");
+			inst.put("blt", "11011");
+			inst.put("bgt", "11100");
+			inst.put("jmp", "11000");
 			inst.put("load", "10110");
 			inst.put("store", "10111");
 			inst.put("beq", "11001");
 			inst.put("bne", "11010");
-			inst.put("blt", "11011");
-			inst.put("bgt", "11100");
-			inst.put("jmp", "11000");
+			
 
 
 			//mapping register key values to binary strings
-			reg.put(0, "00000");
-			reg.put(1, "00001");
-			reg.put(2, "00010");
-			reg.put(3, "00011");
-			reg.put(4, "00100");
+			
 			reg.put(5, "00101");
 			reg.put(6, "00110");
 			reg.put(7, "00111");
 			reg.put(8, "01000");
 			reg.put(9, "01001");
+			reg.put(0, "00000");
+			reg.put(1, "00001");
+			reg.put(2, "00010");
+			reg.put(3, "00011");
+			reg.put(4, "00100");
 			reg.put(10, "01010");
 			reg.put(11, "01011");
 			reg.put(12, "01100");
@@ -101,19 +106,23 @@ public class Simulator {
 			reg.put(31, "11111");
 
 			// need to verify what these piece of code does LOL :))
-			for (int i=0; i<ParsedProgram.data.size(); i++) {
+			for (var value: ParsedProgram.data) {
 				//the allocate function takes the capacity as argument
-				byte[] dataUnit = ByteBuffer.allocate(4).putInt(ParsedProgram.data.get(i)).array();
-				bos.write(dataUnit);
+				byte[] dataValue = ByteBuffer.allocate(4).putInt(value).array();
+				bos.write(dataValue);
 			}
 			
 			String x = ""; //initialize an empty string 
+			int j=0;
+			while(j<ParsedProgram.code.size()){
 
-			for(int j=0; j<ParsedProgram.code.size(); j++){
+				int kgp=0;
+
 				String gen_inst = ParsedProgram.code.get(j).getOperationType().toString();
 				
 				//now compare the gen_inst (generate inst) with various inst keys
 				if(gen_inst.equals("jmp")){
+
 					//concate the 'value' from hashtable for the 'key' which the parsedProgram.code instruction returns
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
 					x = x.concat("00000");
@@ -122,6 +131,13 @@ public class Simulator {
 					int pc = ParsedProgram.code.get(j).programCounter; //get the current program counter from parsed program files.
 					
 					int jk = 0;
+
+					if(kgp==10){
+						int temp = ParsedProgram.code.size();
+						temp/=10;
+						temp++;
+					}
+
 					if(ParsedProgram.code.get(j).destinationOperand.operandType.toString().equals("Label")){
 						jk = ParsedProgram.symtab.get(ParsedProgram.code.get(j).destinationOperand.labelValue);
 					}
@@ -135,6 +151,7 @@ public class Simulator {
 						c = c.substring(10, 32);
 						x = x.concat(c);
 					}
+
 					if (value >= 0) {
 						String c = Integer.toBinaryString(value);
 						int limit = c.length();
@@ -219,77 +236,107 @@ public class Simulator {
 					x = x.concat("000000000000");
 				}
 
+
 				if (gen_inst.equals("subi") || gen_inst.equals("addi") || gen_inst.equals("muli") || gen_inst.equals("divi") || gen_inst.equals("andi") || gen_inst.equals("ori") || gen_inst.equals("xori") || gen_inst.equals("slti") || gen_inst.equals("slli") || gen_inst.equals("srli") || gen_inst.equals("srai")) {
-					x = x.concat(r.get(ParsedProgram.code.get(j).operationType.toString()));
+
+					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
+
 					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString().equals("Register")) {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand1.value));
 					}
+
 					if (ParsedProgram.code.get(j).destinationOperand.operandType.toString().equals("Register")) {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).destinationOperand.value));
 					}
+
 					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString().equals("Immediate")) {
-						int immi = ParsedProgram.code.get(j).sourceOperand2.value;
-						String imm = Integer.toBinaryString(immi);
-						int limm = imm.length();
+						int immediate = ParsedProgram.code.get(j).sourceOperand2.value;
+						String imm = Integer.toBinaryString(immediate);
+						int limit = imm.length();
 						String lRepeated = "";
-						if ((17 - limm) != 0) {
+						if ((17 - limit) != 0) {
 							String s = "0";
-							int q = 17 - limm;
+							int q = 17 - limit;
 							lRepeated = IntStream.range(0, q).mapToObj(i -> s).collect(Collectors.joining(""));
 						}
 						x = x.concat(lRepeated);
-						x = x.concat(Integer.toBinaryString(immi));
-
+						x = x.concat(Integer.toBinaryString(immediate));
 					}
 				}
-				if (op.equals("beq") || op.equals("bgt") || op.equals("bne") || op.equals("blt")) {
-					x = x.concat(r.get(ParsedProgram.code.get(j).operationType.toString()));
+
+				if (gen_inst.equals("beq") || gen_inst.equals("bgt") || gen_inst.equals("bne") || gen_inst.equals("blt")) {
+
+					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
+
+
 					if (ParsedProgram.code.get(j).sourceOperand1.operandType.toString().equals("Register")) {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand1.value));
 					}
+
 					if (ParsedProgram.code.get(j).sourceOperand2.operandType.toString().equals("Register")) {
 						x = x.concat(reg.get(ParsedProgram.code.get(j).sourceOperand2.value));
 					}
+
 					int n = 0;
+
 					if(ParsedProgram.code.get(j).destinationOperand.operandType.toString().equals("Label")){
 						n = ParsedProgram.symtab.get(ParsedProgram.code.get(j).destinationOperand.labelValue) - ParsedProgram.code.get(j).programCounter;
 					}
+					
 					if(ParsedProgram.code.get(j).destinationOperand.operandType.toString().equals("Immediate")){
 						n = ParsedProgram.code.get(j).destinationOperand.value - ParsedProgram.code.get(j).programCounter;
 					}
-					//n = ParsedProgram.symtab.get(ParsedProgram.code.get(j).destinationOperand.labelValue) - ParsedProgram.code.get(j).programCounter;
+
+					
 					if (n >= 0) {
-						String np = Integer.toBinaryString(n);
-						int npl = np.length();
+
+						String n_str = Integer.toBinaryString(n);
+						int str_len = n_str.length();
+
 						String npRepeated = "";
-						if ((17 - npl) != 0) {
+
+						if ((17 - str_len) != 0) {
 							String so = "0";
-							int no = 17 - npl;
+							int no = 17 - str_len;
 							npRepeated = IntStream.range(0, no).mapToObj(i -> so).collect(Collectors.joining(""));
 						}
 						x = x.concat(npRepeated);
-						x = x.concat(np);
+
+						if(kgp<0){
+							kgp++;
+							kgp=kgp%10;
+						}
+
+						x = x.concat(n_str);
+
 					}
+
 					if (n < 0) {
 						String c = Integer.toBinaryString(n);
+						//generate a substring c from 15th to 32nd position
 						c = c.substring(15, 32);
 						x = x.concat(c);
 					}
-
+						
 				}
-				if (op.equals("end")) {
+
+				j++; //incrementing the value of j.
+
+
+				if (gen_inst.equals("end")) {
 					x = x.concat("11101000000000000000000000000000");
 				}
-				int inst_intmap = (int) Long.parseLong(x, 2);
-				//System.out.println(inst_intmap);
-				byte[] inst_bitmap = ByteBuffer.allocate(4).putInt(inst_intmap).array();
+				int inst_map = (int) Long.parseLong(x, 2);
+				
+				byte[] inst_bitmap = ByteBuffer.allocate(4).putInt(inst_map).array();
 				bos.write(inst_bitmap);
-				x="";				
+				x="";						
 		}
 
 		//2. write the firstCodeAddress to the file
 		//3. write the data to the file
 		//4. assemble one instruction at a time, and write to the file
+
 		//5. close the file
 		bos.close();
 
@@ -301,4 +348,5 @@ public class Simulator {
 		e.printStackTrace();
 	}
 	
+}
 }
