@@ -1,172 +1,210 @@
 package generic;
 
+import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
 import java.nio.ByteBuffer;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.HashSet;
+import java.util.Set;
+
+import generic.Operand.OperandType;
 
 
 public class Simulator {
-
+		
 	static FileInputStream inputcodeStream = null;
-	
-	public static Map<Instruction.OperationType, String> mapping = new HashMap<>() {{
-		put(Instruction.OperationType.add, "00000");
-		put(Instruction.OperationType.addi, "00001");
-		put(Instruction.OperationType.sub, "00010");
-		put(Instruction.OperationType.subi, "00011");
-		put(Instruction.OperationType.mul, "00100");
-		put(Instruction.OperationType.muli, "00101");
-		put(Instruction.OperationType.div, "00110");
-		put(Instruction.OperationType.divi, "00111");
-		put(Instruction.OperationType.and, "01000");
-		put(Instruction.OperationType.andi, "01001");
-		put(Instruction.OperationType.or, "01010");
-		put(Instruction.OperationType.ori, "01011");
-		put(Instruction.OperationType.xor, "01100");
-		put(Instruction.OperationType.xori, "01101");
-		put(Instruction.OperationType.slt, "01110");
-		put(Instruction.OperationType.slti, "01111");
-		put(Instruction.OperationType.sll, "10000");
-		put(Instruction.OperationType.slli, "10001");
-		put(Instruction.OperationType.srl, "10010");
-		put(Instruction.OperationType.srli, "10011");
-		put(Instruction.OperationType.sra, "10100");
-		put(Instruction.OperationType.srai, "10101");
-		put(Instruction.OperationType.load, "10110");
-		put(Instruction.OperationType.end, "11101");
-		put(Instruction.OperationType.beq, "11001");
-		put(Instruction.OperationType.jmp, "11000");
-		put(Instruction.OperationType.bne, "11010");
-		put(Instruction.OperationType.blt, "11011");
-		put(Instruction.OperationType.bgt, "11100");
-	}};
+	public static HashMap<Instruction.OperationType, String> op_code = new HashMap<>();
+	public static Set<String> R2I = new HashSet<String>();
+	public static Set<String> R3 = new HashSet<String>();
+	public static Set<String> conditional_branch = new HashSet<String>();
 
-	public static void setupSimulation(String assemblyProgramFile) {
+	
+	public static void setupSimulation(String assemblyProgramFile)
+	{	
 		int firstCodeAddress = ParsedProgram.parseDataSection(assemblyProgramFile);
 		ParsedProgram.parseCodeSection(assemblyProgramFile, firstCodeAddress);
 		ParsedProgram.printState();
 	}
 	
-	private static String toBinaryOfSpecificPrecision(int num, int lenOfTargetString) {
-		String binary = String.format("%" + lenOfTargetString + "s", Integer.toBinaryString(num)).replace(' ', '0');
-		return binary;
-	}
-	
-	private static int toSignedInteger(String binary) {
-		int n = 32 - binary.length();
-        char[] sign_ext = new char[n];
-        Arrays.fill(sign_ext, binary.charAt(0));
-        int signedInteger = (int) Long.parseLong(new String(sign_ext) + binary, 2);
-        return signedInteger;
-	}
-	
-	private static String toBinaryString(int n) {
-		// Remove this conditional statement
-		// if (n >= 0) return String.valueOf(n);
-
-		Stack<Integer> bits = new Stack<>();
-		do {
-			bits.push(n % 2);
-			n /= 2;
-		} while (n != 0);
-
-		StringBuilder builder = new StringBuilder();
-		while (!bits.isEmpty()) {
-			builder.append(bits.pop());
-		}
-		return " " + builder.toString();
-	}
-
-	private static String convert(Operand inst, int precision) {
-		if (inst == null)
-			return toBinaryOfSpecificPrecision(0, precision);
-
-		if (inst.getOperandType() == Operand.OperandType.Label)
-			return toBinaryOfSpecificPrecision(ParsedProgram.symtab.get(inst.getLabelValue()), precision);
-
-		// write logic for converting to binary/ hex
-		return toBinaryOfSpecificPrecision(inst.getValue(), precision);
-	}
-
-	public static void assemble(String objectProgramFile) {
-		FileOutputStream file;
+	public static void assemble(String objectProgramFile)
+	{
 		try {
-			//1. open the objectProgramFile in binary mode
-			file = new FileOutputStream(objectProgramFile);
-			BufferedOutputStream bfile = new BufferedOutputStream(file);
+		//1. open the objectProgramFile in binary mode
+		FileOutputStream op_file = new FileOutputStream(objectProgramFile);
+		BufferedOutputStream buf_file = new BufferedOutputStream(op_file);
+		
+		//2. write the firstCodeAddress to the file
+		byte[] encodedFirstAdd = ByteBuffer.allocate(4).putInt(ParsedProgram.firstCodeAddress).array();
+		buf_file.write(encodedFirstAdd);
 
-			//2. write the firstCodeAddress to the file
-			byte[] addressCode = ByteBuffer.allocate(4).putInt(ParsedProgram.firstCodeAddress).array();
-			bfile.write(addressCode);
+		//3. write the data to the file
+		for(int datum: ParsedProgram.data){
+			byte[] encodedDatum = ByteBuffer.allocate(4).putInt(datum).array();
+			buf_file.write(encodedDatum);
+		}
 
-			//3. write the data to the file
-			for (var value: ParsedProgram.data) {
-				byte[] dataValue = ByteBuffer.allocate(4).putInt(value).array();
-				bfile.write(dataValue);
+		//4. assemble one instruction at a time, and write to the file
+
+		// initialize mapping between operations and their respective op_codes
+		op_code.put(Instruction.OperationType.add, "00000");
+		op_code.put(Instruction.OperationType.addi, "00001");
+		op_code.put(Instruction.OperationType.sub, "00010");
+		op_code.put(Instruction.OperationType.subi, "00011");
+		op_code.put(Instruction.OperationType.mul, "00100");
+		op_code.put(Instruction.OperationType.muli, "00101");
+		op_code.put(Instruction.OperationType.div, "00110");
+		op_code.put(Instruction.OperationType.divi, "00111");
+		op_code.put(Instruction.OperationType.and, "01000");
+		op_code.put(Instruction.OperationType.andi, "01001");
+		op_code.put(Instruction.OperationType.or, "01010");
+		op_code.put(Instruction.OperationType.ori, "01011");
+		op_code.put(Instruction.OperationType.xor, "01100");
+		op_code.put(Instruction.OperationType.xori, "01101");
+		op_code.put(Instruction.OperationType.slt, "01110");
+		op_code.put(Instruction.OperationType.slti, "01111");
+		op_code.put(Instruction.OperationType.sll, "10000");
+		op_code.put(Instruction.OperationType.slli, "10001");
+		op_code.put(Instruction.OperationType.srl, "10010");
+		op_code.put(Instruction.OperationType.srli, "10011");
+		op_code.put(Instruction.OperationType.sra, "10100");
+		op_code.put(Instruction.OperationType.srai, "10101");
+		op_code.put(Instruction.OperationType.load, "10110");
+		op_code.put(Instruction.OperationType.store, "10111");
+		op_code.put(Instruction.OperationType.jmp, "11000");
+		op_code.put(Instruction.OperationType.beq, "11001");
+		op_code.put(Instruction.OperationType.bne, "11010");
+		op_code.put(Instruction.OperationType.blt, "11011");
+		op_code.put(Instruction.OperationType.bgt, "11100");
+		op_code.put(Instruction.OperationType.end, "11101");
+
+		R2I.add("00001");
+		R2I.add("00011");
+		R2I.add("00101");
+		R2I.add("00111");
+		R2I.add("01001");
+		R2I.add("01011");
+		R2I.add("01101");
+		R2I.add("01111");
+		R2I.add("10001");
+		R2I.add("10011");
+		R2I.add("10101");
+		R2I.add("10110");
+		R2I.add("10111");
+		R2I.add("11001");
+		R2I.add("11010");
+		R2I.add("11011");
+		R2I.add("11100");
+
+		R3.add("00000");
+		R3.add("00010");
+		R3.add("00100");
+		R3.add("00110");
+		R3.add("01000");
+		R3.add("01010");
+		R3.add("01100");
+		R3.add("01110");
+		R3.add("10000");
+		R3.add("10010");
+		R3.add("10100");
+
+		conditional_branch.add("11001");
+		conditional_branch.add("11010");
+		conditional_branch.add("11011");
+		conditional_branch.add("11100");
+
+		/*  
+		 * other 2 cases are left, handel them separately :-
+		 * -> jmp : "11000"
+		 * -> end : "11101"
+		 */
+
+		for(Instruction instr: ParsedProgram.code){
+			String encoded_instr="";
+			
+			// writing opcode to binary output
+			encoded_instr = encoded_instr.concat(op_code.get(instr.getOperationType()));
+
+			if(R3.contains(encoded_instr)){
+				// R3
+
+				encoded_instr = encoded_instr.concat(String.format("%5s", Integer.toBinaryString(instr.sourceOperand1.getValue())).replace(' ', '0'));
+				encoded_instr = encoded_instr.concat(String.format("%5s", Integer.toBinaryString(instr.sourceOperand2.getValue())).replace(' ', '0'));
+				encoded_instr = encoded_instr.concat(String.format("%5s", Integer.toBinaryString(instr.destinationOperand.getValue())).replace(' ', '0'));
+				encoded_instr = encoded_instr.concat("000000000000");
 			}
-
-			//4. assemble one instruction at a time, and write to the file
-			for (var inst: ParsedProgram.code) {
-
-				String binaryRep = "";
-				binaryRep += mapping.get(inst.getOperationType());
-				int opCode = Integer.parseInt(binaryRep, 2);
-				int pc = inst.getProgramCounter();
+			else if(R2I.contains(encoded_instr)){
+				// R2I
 				
-				if (opCode <= 20 && opCode % 2 == 0) {
-					// R3 Type
-					binaryRep += convert(inst.getSourceOperand1(), 5);
-					binaryRep += convert(inst.getSourceOperand2(), 5);
-					binaryRep += convert(inst.getDestinationOperand(), 5);
-					binaryRep += toBinaryOfSpecificPrecision(0, 12);
-				}
-				else if (opCode == 24) {
-					// RI Type
-					if (inst.destinationOperand.getOperandType() == Operand.OperandType.Register) {
-						binaryRep += convert(inst.getDestinationOperand(), 5);
-						binaryRep += toBinaryOfSpecificPrecision(0, 22);
+				if(conditional_branch.contains(encoded_instr)){
+					// for conditional branches
+
+					encoded_instr = encoded_instr.concat(String.format("%5s", Integer.toBinaryString(instr.sourceOperand1.getValue())).replace(' ', '0'));
+					encoded_instr = encoded_instr.concat(String.format("%5s", Integer.toBinaryString(instr.sourceOperand2.getValue())).replace(' ', '0'));
+					if(instr.destinationOperand.operandType == OperandType.Label){
+						String new_addr;
+						if(ParsedProgram.symtab.get(instr.destinationOperand.getLabelValue())-instr.programCounter >= 0){
+							new_addr = String.format("%17s", Integer.toBinaryString(ParsedProgram.symtab.get(instr.destinationOperand.getLabelValue())-instr.programCounter)).replace(' ', '0');
+						}
+						else{
+							new_addr = String.format("%17s", Integer.toBinaryString(ParsedProgram.symtab.get(instr.destinationOperand.getLabelValue())-instr.programCounter)).replace(' ', '0').substring(15, 32);
+						}
+						encoded_instr = encoded_instr.concat(new_addr);
 					}
-					else {						
-						binaryRep += toBinaryOfSpecificPrecision(0, 5);
-						int value = Integer.parseInt(convert(inst.getDestinationOperand(), 5), 2) - pc;
-						String bin = toBinaryOfSpecificPrecision(value, 22);
-						binaryRep += bin.substring(bin.length() - 22);
+					else{
+						encoded_instr = encoded_instr.concat(String.format("%17s", Integer.toBinaryString(instr.destinationOperand.getValue())).replace(' ', '0'));
 					}
-				}
-				else if (opCode == 29) {
-					binaryRep += toBinaryOfSpecificPrecision(0, 27);
 				}
 				else {
-					// R2I Type
-					if (opCode >= 25 && opCode <= 28) {
-						int value = Integer.parseInt(convert(inst.getDestinationOperand(), 5), 2) - pc;
-						binaryRep += convert(inst.getSourceOperand1(), 5);
-						binaryRep += convert(inst.getSourceOperand2(), 5);
-						String bin = toBinaryOfSpecificPrecision(value, 17);
-						binaryRep += bin.substring(bin.length() - 17);
+					// for all other types of R2I commands
+
+					if(instr.sourceOperand2.operandType == OperandType.Immediate){
+						// number as an input of imm
+
+						encoded_instr = encoded_instr.concat(String.format("%5s", Integer.toBinaryString(instr.sourceOperand1.getValue())).replace(' ', '0'));
+						encoded_instr = encoded_instr.concat(String.format("%5s", Integer.toBinaryString(instr.destinationOperand.getValue())).replace(' ', '0'));
+						encoded_instr = encoded_instr.concat(String.format("%17s", Integer.toBinaryString(instr.sourceOperand2.getValue())).replace(' ', '0'));
 					}
-					else {						
-						binaryRep += convert(inst.getSourceOperand1(), 5);
-						binaryRep += convert(inst.getDestinationOperand(), 5);
-						binaryRep += convert(inst.getSourceOperand2(), 17);
+					else if(instr.sourceOperand2.operandType == OperandType.Label){
+						//  label as an input of imm
+	
+						encoded_instr = encoded_instr.concat(String.format("%5s", Integer.toBinaryString(instr.sourceOperand1.getValue())).replace(' ', '0'));
+						encoded_instr = encoded_instr.concat(String.format("%5s", Integer.toBinaryString(instr.destinationOperand.getValue())).replace(' ', '0'));
+						encoded_instr = encoded_instr.concat(String.format("%17s", Integer.toBinaryString(ParsedProgram.symtab.get(instr.sourceOperand2.getLabelValue()))).replace(' ', '0'));
 					}
 				}
-				int instInteger = (int) Long.parseLong(binaryRep, 2);
-				byte[] instBinary = ByteBuffer.allocate(4).putInt(instInteger).array();
-				bfile.write(instBinary);
 			}
-
-			//5. close the file
-			bfile.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
+			else if(encoded_instr.equalsIgnoreCase("11000")){
+				// jmp
+				encoded_instr = encoded_instr.concat("00000");
+				if(instr.destinationOperand.operandType == OperandType.Immediate){
+					encoded_instr = encoded_instr.concat(String.format("%22s", Integer.toBinaryString(instr.destinationOperand.getValue())).replace(' ', '0'));
+				}
+				if(instr.destinationOperand.operandType == OperandType.Label){
+					if(ParsedProgram.symtab.get(instr.destinationOperand.getLabelValue())-instr.getProgramCounter() >= 0){
+						encoded_instr = encoded_instr.concat(String.format("%22s", Integer.toBinaryString(ParsedProgram.symtab.get(instr.destinationOperand.getLabelValue())-instr.getProgramCounter())).replace(' ', '0'));
+					}
+					else{
+						encoded_instr = encoded_instr.concat(String.format("%22s", Integer.toBinaryString(ParsedProgram.symtab.get(instr.destinationOperand.getLabelValue())-instr.getProgramCounter())).replace(' ', '0').substring(10, 32));
+					}
+				}
+			}
+			else if(encoded_instr.equalsIgnoreCase("11101")){
+				// end
+				encoded_instr = encoded_instr.concat("000000000000000000000000000");
+			}
+			int output_instr = (int)Long.parseLong(encoded_instr, 2);
+			byte[] encodedInstruction = ByteBuffer.allocate(4).putInt(output_instr).array();
+			buf_file.write(encodedInstruction);
+		}
+		
+		//5. close the file
+		buf_file.close();
+		op_file.close();
+		} catch (Exception e) {
+			System.out.println("Error :-");
+			System.out.println(e.toString());
+		}
 	}
-	
+
 }
