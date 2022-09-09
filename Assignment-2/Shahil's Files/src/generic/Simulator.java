@@ -244,7 +244,7 @@ public class Simulator
 				}
 
 
-				if (binary_string=="00011" || binary_string=="00001" || binary_string=="00101" || binary_string=="00111" || binary_string=="01001" || binary_string==("01011") || binary_string.==("01101") || binary_string==("01111") || binary_string==("10001") || binary_string==("10011") || binary_string==("10101")) {
+				if (binary_string=="00011" || binary_string=="00001" || binary_string=="00101" || binary_string=="00111" || binary_string=="01001" || binary_string==("01011") || binary_string==("01101") || binary_string==("01111") || binary_string==("10001") || binary_string==("10011") || binary_string==("10101")) {
 
 					x = x.concat(inst.get(ParsedProgram.code.get(j).operationType.toString()));
 
