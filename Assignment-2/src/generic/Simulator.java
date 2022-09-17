@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class Simulator {
 
 	static FileInputStream inputcodeStream = null;
-	public static Map<Instruction.OperationType, String> mapping = new HashMap<>() {{
+	public static Map<Instruction.OperationType, String> mapping = new HashMap<Instruction.OperationType, String>() {{
 		put(Instruction.OperationType.add, "00000");
 		put(Instruction.OperationType.addi, "00001");
 		put(Instruction.OperationType.sub, "00010");
@@ -119,11 +119,11 @@ public class Simulator {
 		if(temporr_1==0){temporr_1+=1;}
 
 		
-			for (var value: ParsedProgram.data) {
+			for (Integer value: ParsedProgram.data) {
 				byte[] dataValue = ByteBuffer.allocate(4).putInt(value).array();
 				bfile.write(dataValue);
 			}
-			for (var inst: ParsedProgram.code) {
+			for (Instruction inst: ParsedProgram.code) {
 				String binaryRep = "";
 
 				binaryRep += mapping.get(inst.getOperationType());
