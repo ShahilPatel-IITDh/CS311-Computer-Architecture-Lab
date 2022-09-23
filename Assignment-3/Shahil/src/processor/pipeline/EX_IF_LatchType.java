@@ -28,6 +28,10 @@ public class EX_IF_LatchType {
 		this.enabled = is_enabled;
 	}
 
+	public void setPC(int program_counter){
+		this.PC = program_counter;
+	}
+	
 	//value getter for enable 
 	public boolean getEnable(){
 		return enabled;
