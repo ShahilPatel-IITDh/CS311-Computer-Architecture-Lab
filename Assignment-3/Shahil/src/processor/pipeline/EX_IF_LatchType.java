@@ -2,41 +2,41 @@ package processor.pipeline;
 
 public class EX_IF_LatchType {
 
-	boolean EX_IF_enable;
-	int PC;
+	boolean IS_enable;
+	int PC_value;
 
 	public EX_IF_LatchType() {
-		EX_IF_enable = false;
+		this.IS_enable = false;
 	}
 
 	public EX_IF_LatchType(boolean ex_if_enable) {
-		EX_IF_enable = ex_if_enable;
+		this.IS_enable = ex_if_enable;
 	}
 
 	public EX_IF_LatchType(boolean ex_if_enable, int pc) {
-		EX_IF_enable = ex_if_enable;
-		PC = pc;
+		this.IS_enable = ex_if_enable;
+		this.PC_value = pc;
 	}
 
 	public boolean isEX_IF_enable() {
-		return EX_IF_enable;
+		return this.IS_enable;
 	}
 
 	public void setEX_IF_enable(boolean ex_if_enable, int pc) {
-		EX_IF_enable = ex_if_enable;
-		PC = pc;
+		this.IS_enable = ex_if_enable;
+		this.PC_value = pc;
 	}
 
 	public void setEX_IF_enable(boolean ex_if_enable) {
-		EX_IF_enable = ex_if_enable;
+		this.IS_enable = ex_if_enable;
 	}
 
 	public void setPC(int pc) {
-		PC = pc;
+		this.PC_value = pc;
 	}
 
 	public int getPC() {
-		return PC;
+		return PC_value;
 	}
 
 }
