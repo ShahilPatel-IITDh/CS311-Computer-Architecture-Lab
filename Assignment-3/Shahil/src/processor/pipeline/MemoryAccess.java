@@ -1,8 +1,8 @@
 package processor.pipeline;
 
+import generic.Instruction;
 import processor.Processor;
 import generic.Instruction.OperationType;
-import generic.Instruction;
 
 public class MemoryAccess {
 	Processor containingProcessor;
@@ -18,33 +18,28 @@ public class MemoryAccess {
 	
 	public void performMA()
 	{
-		//TODO
 		if(EX_MA_Latch.isMA_enable()){
+			Instruction currentInstruction = EX_MA_Latch.getInstruction();
+			int aluResult = EX_MA_Latch.getAluResult();
+			OperationType currentOperation = currentInstruction.getOperationType();
 
-			int alu_result = EX_MA_Latch.getALU();
-
-			MA_RW_Latch.setALU(alu_result);
-
-			Instruction instruction = EX_MA_Latch.getInst();
-
-			OperationType Operation_Type = instruction.getOperationType();
-
-			if(Operation_Type.toString().equals("store")){
-				
-				int res_store = containingProcessor.getRegisterFile().getValue(instruction.getSourceOperand1().getValue());
-				containingProcessor.getMainMemory().setWord(alu_result, res_store);
+			System.out.println("\nMA Stage");
+			if(currentOperation == OperationType.load){
+				System.out.println("Operation = " + currentOperation.name());
+				int ldResult = containingProcessor.getMainMemory().getWord(aluResult);
+				MA_RW_Latch.setLdResult(ldResult);
+				System.out.println("ld Result = " + ldResult);
 			}
-
-			else if(Operation_Type.toString().equals("load")){
-				int res_load = containingProcessor.getMainMemory().getWord(alu_result);
-				MA_RW_Latch.setLoadResult(res_load);
+			else if(currentOperation == OperationType.store){
+				System.out.println("Operation = " + currentOperation.name());
+				int stWord = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+				containingProcessor.getMainMemory().setWord(aluResult, stWord);
+				System.out.println("Storing = " + stWord + " into Memory location = " + aluResult);
 			}
-
-			MA_RW_Latch.setInst(instruction);
-			MA_RW_Latch.setRW_enable(true);
+			MA_RW_Latch.setAluResult(aluResult);
+			MA_RW_Latch.setInstruction(currentInstruction);
 			EX_MA_Latch.setMA_enable(false);
+			MA_RW_Latch.setRW_enable(true);
 		}
-
 	}
-
 }

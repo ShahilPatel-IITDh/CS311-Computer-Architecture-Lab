@@ -1,11 +1,10 @@
 package processor.pipeline;
 
+import generic.Instruction;
+import generic.Operand;
 import processor.Processor;
 import generic.Instruction.OperationType;
-import generic.Instruction;
 import generic.Operand.OperandType;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Execute {
 	Processor containingProcessor;
@@ -23,180 +22,207 @@ public class Execute {
 	
 	public void performEX()
 	{
-		//TODO
 		if(OF_EX_Latch.isEX_enable()){
-			//getting the command from OF-EX-Latch 
-			Instruction command = OF_EX_Latch.getInst();
-
-			//passing the same command to EX-MA Latch
-			EX_MA_Latch.setInst(command);
-
-			OperationType cmd_operation = command.getOperationType();
-
-			int opcode = Arrays.asList(OperationType.values()).indexOf(cmd_operation);
-
-			int curr_PC = containingProcessor.getRegisterFile().getProgramCounter()-1;
-
-			int alu_result = 0;
-
-			if(opcode < 21 && opcode%2 == 0){
-				int op1 = containingProcessor.getRegisterFile().getValue(command.getSourceOperand1().getValue());
-
-				int op2 = containingProcessor.getRegisterFile().getValue(command.getSourceOperand2().getValue());
-
-				if(cmd_operation.toString().equals("add")){
-					alu_result = op1+op2;
-				}
-				else if(cmd_operation.toString().equals("sub")){
-					alu_result = op1-op2;
-				}
-				else if(cmd_operation.toString().equals("mul")){
-					alu_result = op1*op2;
-				}
-				else if(cmd_operation.toString().equals("div")){
-					alu_result = op1/op2;
-					int remainder = op1%op2;
+			Instruction currentInstruction = OF_EX_Latch.getInstruction();
+			int currentPC = currentInstruction.getProgramCounter() - 1;
+			OperationType currentOperation = currentInstruction.getOperationType();
+			int sourceOperand1 = -1, sourceOperand2 = -1, immediate, remainder;
+			int aluResult = -1;
+			switch (currentOperation){
+				case add:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					aluResult = sourceOperand1 + sourceOperand2;
+					break;
+				case addi:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 + immediate;
+					break;
+				case sub:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					aluResult = sourceOperand1 - sourceOperand2;
+					break;
+				case subi:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 - immediate;
+					break;
+				case mul:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					aluResult = sourceOperand1 * sourceOperand2;
+					break;
+				case muli:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 * immediate;
+					break;
+				case div:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					aluResult = sourceOperand1 / sourceOperand2;
+					remainder = (sourceOperand1 % sourceOperand2);
 					containingProcessor.getRegisterFile().setValue(31, remainder);
-				}
-				else if(cmd_operation.toString().equals("and")){
-					alu_result = op1 & op2;
-				}
-				else if(cmd_operation.toString().equals("or")){
-					alu_result = op1 | op2;
-				}
-				else if(cmd_operation.toString().equals("xor")){
-					alu_result = op1^op2;
-				}
-				else if(cmd_operation.toString().equals("slt")){
-					if(op1 < op2){
-						alu_result = 1;
+					break;
+				case divi:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 / immediate;
+					remainder = (sourceOperand1 % immediate);
+					containingProcessor.getRegisterFile().setValue(31, remainder);
+					break;
+				case and:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					aluResult = sourceOperand1 & sourceOperand2;
+					break;
+				case andi:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 & immediate;
+					break;
+				case or:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					aluResult = sourceOperand1 | sourceOperand2;
+					break;
+				case ori:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 | immediate;
+					break;
+				case xor:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					aluResult = sourceOperand1 ^ sourceOperand2;
+					break;
+				case xori:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 ^ immediate;
+					break;
+				case slt:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					if(sourceOperand1 < sourceOperand2)
+						aluResult = 1;
+					else
+						aluResult = 0;
+					break;
+				case slti:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					if(sourceOperand1 < immediate)
+						aluResult = 1;
+					else
+						aluResult = 0;
+					break;
+				case sll:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					aluResult = sourceOperand1 << sourceOperand2;
+					break;
+				case slli:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 << immediate;
+					break;
+				case srl:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					aluResult = sourceOperand1 >>> sourceOperand2;
+					break;
+				case srli:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 >>> immediate;
+					break;
+				case sra:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					aluResult = sourceOperand1 >> sourceOperand2;
+					break;
+				case srai:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 >> immediate;
+					break;
+				case load:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 + immediate;
+					break;
+				case store:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getDestinationOperand().getValue());
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 + immediate;
+					break;
+				case jmp:
+					OperandType jump = currentInstruction.getDestinationOperand().getOperandType();
+					if(jump == OperandType.Register){
+						immediate = containingProcessor.getRegisterFile().getValue(currentInstruction.getDestinationOperand().getValue());
 					}
 					else{
-						alu_result = 0;
+						immediate = currentInstruction.getDestinationOperand().getValue();
 					}
-				}
-				else if(cmd_operation.toString().equals("sll")){
-					alu_result = op1 << op2;
-				}
-				else if(cmd_operation.toString().equals("srl")){
-					alu_result = op1 >>> op2;
-				}
-				else if(cmd_operation.toString().equals("sra")){
-					alu_result = op1 >> op2;
-				}
-
-			}
-
-			else if(opcode < 23){
-				int con = command.getSourceOperand1().getValue();
-				int op1 = containingProcessor.getRegisterFile().getValue(con);
-				int op2 = command.getSourceOperand2().getValue();
-
-				if(cmd_operation.toString().equals("addi")){
-					alu_result = op1 + op2;
-				}
-				else if(cmd_operation.toString().equals("subi")){
-					alu_result = op1 - op2;
-				}
-				else if(cmd_operation.toString().equals("muli")){
-					alu_result = op1 * op2;
-				}
-				else if(cmd_operation.toString().equals("divi")){
-					alu_result = op1 / op2;
-					int r = op1 % op2;
-					containingProcessor.getRegisterFile().setValue(31, r);
-				}
-				else if(cmd_operation.toString().equals("andi")){
-					alu_result = op1 & op2;
-				}
-				else if(cmd_operation.toString().equals("ori")){
-					alu_result = op1 | op2;
-				}
-				else if(cmd_operation.toString().equals("xori")){
-					alu_result = op1 ^ op2;
-				}
-				else if(cmd_operation.toString().equals("slti")){
-					if(op1 < op2)
-						alu_result = 1;
-					else
-						alu_result = 0;
-				}
-				else if(cmd_operation.toString().equals("slli")){
-					alu_result = op1 << op2;
-				}
-				else if(cmd_operation.toString().equals("srli")){
-					alu_result = op1 >>> op2;
-				}
-				else if(cmd_operation.toString().equals("srai")){
-					alu_result = op1 >> op2;
-				}
-				else if(cmd_operation.toString().equals("load")){
-					alu_result = op1 + op2;
-				}
-			}
-
-			else if(opcode == 23){
-				int op1 = containingProcessor.getRegisterFile().getValue(command.getDestinationOperand().getValue());
-				int op2 = command.getSourceOperand2().getValue();
-				alu_result = op1+op2;
-			}
-
-			else if(opcode == 24){
-				OperandType OPERNDTYPE = command.getDestinationOperand().getOperandType();
-
-				int immediate = 0;
-
-				if (OPERNDTYPE == OperandType.Register){
-					immediate = containingProcessor.getRegisterFile().getValue(
-							command.getDestinationOperand().getValue());
-				}
-				else{
-					immediate = command.getDestinationOperand().getValue();
-				}
-				alu_result = immediate + curr_PC;
-				EX_IF_Latch.setEnable(true, alu_result);
-			}
-
-			else if(opcode < 29)
-			{
-				int op1 = containingProcessor.getRegisterFile().getValue(
-						command.getSourceOperand1().getValue());
-				int op2 = containingProcessor.getRegisterFile().getValue(
-						command.getSourceOperand2().getValue());
-				int immediate = command.getDestinationOperand().getValue();
-
-				if(cmd_operation.toString().equals("beq")){
-					if(op1 == op2)
-					{
-						alu_result = immediate + curr_PC;
-						EX_IF_Latch.setEnable(true, alu_result);
+					aluResult = currentPC + immediate;
+					EX_IF_Latch.setEX_IF_enable(true, aluResult);
+					break;
+				case beq:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					immediate = currentInstruction.getDestinationOperand().getValue();
+					if(sourceOperand1 == sourceOperand2){
+						aluResult = currentPC + immediate;
+						EX_IF_Latch.setEX_IF_enable(true, aluResult);
 					}
-				}
-				else if(cmd_operation.toString().equals("bne")){
-					if(op1 != op2)
-					{
-						alu_result = immediate + curr_PC;
-						EX_IF_Latch.setEnable(true, alu_result);
+					break;
+				case bne:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					immediate = currentInstruction.getDestinationOperand().getValue();
+					if(sourceOperand1 != sourceOperand2){
+						aluResult = currentPC + immediate;
+						EX_IF_Latch.setEX_IF_enable(true, aluResult);
 					}
-				}
-				else if(cmd_operation.toString().equals("blt")){
-
-					if(op1 < op2){
-						alu_result = immediate + curr_PC;
-						EX_IF_Latch.setEnable(true, alu_result);
+					break;
+				case blt:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					immediate = currentInstruction.getDestinationOperand().getValue();
+					if(sourceOperand1 < sourceOperand2){
+						aluResult = currentPC + immediate;
+						EX_IF_Latch.setEX_IF_enable(true, aluResult);
 					}
-				}
-				else if(cmd_operation.toString().equals("bgt")){
-					if(op1 > op2)
-					{
-						alu_result = immediate + curr_PC;
-						EX_IF_Latch.setEnable(true, alu_result);
+					break;
+				case bgt:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					immediate = currentInstruction.getDestinationOperand().getValue();
+					if(sourceOperand1 > sourceOperand2){
+						aluResult = currentPC + immediate;
+						EX_IF_Latch.setEX_IF_enable(true, aluResult);
 					}
-				}
+					break;
+				case end:
+					break;
+				default:
+					break;
 			}
-			EX_MA_Latch.setALU(alu_result);
+			EX_MA_Latch.setAluResult(aluResult);
+			EX_MA_Latch.setInstruction(currentInstruction);
 
+			OF_EX_Latch.setEX_enable(false);
+			EX_MA_Latch.setMA_enable(true);
+
+			System.out.println("\nEX Stage");
+			System.out.println("Operation = " + currentOperation.name());
+			if(aluResult != -1)
+				System.out.println("Alu Result = " + aluResult);
+			System.out.println(sourceOperand1);
+			System.out.println(sourceOperand2);
 		}
 	}
-
 }

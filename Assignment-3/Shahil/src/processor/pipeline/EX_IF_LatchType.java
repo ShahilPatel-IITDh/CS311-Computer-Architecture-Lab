@@ -2,41 +2,41 @@ package processor.pipeline;
 
 public class EX_IF_LatchType {
 
+	boolean EX_IF_enable;
+	int PC;
 
-	// setEnable sets the enabled to parameter passed in the function
-	// getEnable returns the value of Enable
-	// getPC returns the value of PC 
-
-	public boolean enabled;
-	public int PC;
-	
-	//constructor
-	public EX_IF_LatchType()
-	{
-		enabled = false;
+	public EX_IF_LatchType() {
+		EX_IF_enable = false;
 	}
 
-	//value setter for branch condition, as PC will change to new_PC
-	public void setEnable(boolean is_enabled, int new_PC){
-		this.enabled = is_enabled;
-		this.PC = new_PC;
+	public EX_IF_LatchType(boolean ex_if_enable) {
+		EX_IF_enable = ex_if_enable;
 	}
 
-	//value setter for normal condition (i.e. no branch)
-	//is_enabled will be true / false
-	public void setEnable(boolean is_enabled){
-		this.enabled = is_enabled;
+	public EX_IF_LatchType(boolean ex_if_enable, int pc) {
+		EX_IF_enable = ex_if_enable;
+		PC = pc;
 	}
 
-	//value getter for enable 
-	public boolean getEnable(){
-		return enabled;
+	public boolean isEX_IF_enable() {
+		return EX_IF_enable;
 	}
 
-	//value getter for pc
-	public int getPC(){
+	public void setEX_IF_enable(boolean ex_if_enable, int pc) {
+		EX_IF_enable = ex_if_enable;
+		PC = pc;
+	}
+
+	public void setEX_IF_enable(boolean ex_if_enable) {
+		EX_IF_enable = ex_if_enable;
+	}
+
+	public void setPC(int pc) {
+		PC = pc;
+	}
+
+	public int getPC() {
 		return PC;
 	}
-
 
 }

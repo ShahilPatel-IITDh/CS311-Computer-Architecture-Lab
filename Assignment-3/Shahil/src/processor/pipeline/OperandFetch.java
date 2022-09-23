@@ -1,13 +1,12 @@
 package processor.pipeline;
 
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import generic.Instruction;
 import generic.Operand;
-import generic.Instruction.OperationType;
-import generic.Operand.OperandType;
 import processor.Processor;
+
+import java.nio.ByteBuffer;
+
+import generic.Instruction.OperationType;
 
 public class OperandFetch {
 	Processor containingProcessor;
@@ -20,220 +19,175 @@ public class OperandFetch {
 		this.IF_OF_Latch = iF_OF_Latch;
 		this.OF_EX_Latch = oF_EX_Latch;
 	}
-	
-	public static char opposite(char c)
+
+	//Method to find two's complement
+	public static String twoscomplement(StringBuffer str)
 	{
-		if(c == '0'){
-			return '1';
+		int n = str.length();
+
+		int i;
+		for (i = n-1 ; i >= 0 ; i--)
+			if (str.charAt(i) == '1')
+				break;
+
+		if (i == -1)
+			return "1" + str;
+
+		for (int k = i-1 ; k >= 0; k--)
+		{
+			//Flipping the values
+			if (str.charAt(k) == '1')
+				str.replace(k, k+1, "0");
+			else
+				str.replace(k, k+1, "1");
 		}
-		return '0';
-		// return (c == '0') ? '1' : '0';
+
+		// return the 2's complement
+		return str.toString();
 	}
 
-	public static String twos_Complement(String binaryString)
-	{
-		String twos_comp = "";
-		String ones_comp = "";
-
-		for (int i = 0; i < binaryString.length(); i++){
-			//flip the bits and store it in ones_comp
-			ones_comp+= opposite(binaryString.charAt(i));
+	public static String toBinary(int x, int len){
+		if (len > 0) {
+			return String.format("%" + len + "s",
+					Integer.toBinaryString(x)).replace(" ", "0");
 		}
+		return null;
+	}
 
-		StringBuilder builder = new StringBuilder(ones_comp);
-		boolean flag = false;
-
-		for (int i = ones_comp.length() - 1; i > 0; i--){
-			
-			//if the digit is one, then make it 0 and add 1 to next bit
-			if (ones_comp.charAt(i) == '1'){
-				builder.setCharAt(i, '0');
-			}
-
-			//if the bit is 0, simply make it one
-			else{
-				builder.setCharAt(i, '1');
-				flag = true;
-				break;
-			}
+	public static int toInteger(String binary){
+		if(binary.charAt(0) == '1'){
+			StringBuffer bufferBinary = new StringBuffer();
+			bufferBinary.append(binary);
+			binary = "-" + twoscomplement(bufferBinary);
 		}
-
-		if (flag == false){
-			builder.append("1", 0, 7);
+		else{
+			binary = "+" + binary;
 		}
-
-		twos_comp = builder.toString();
-		return twos_comp;
+		return Integer.parseInt(binary, 2);
 	}
 
 	public void performOF()
 	{
-		if(IF_OF_Latch.isOF_enable()){
-			//TODO
+		if(IF_OF_Latch.isOF_enable())
+		{
+			int Instruction = IF_OF_Latch.getInstruction();
+			int currentPC = containingProcessor.getRegisterFile().getProgramCounter();
+			String binaryInstruction =  toBinary(Instruction, 32);
 
-			OperationType[] operationType = OperationType.values();
+			OperationType[] operationTypes = OperationType.values(); //getting all operation types from OperationType enum
+			int opCodeInt = Integer.parseInt(binaryInstruction.substring(0, 5), 2);
+			OperationType currentOperation = operationTypes[opCodeInt];
 
-			int inst = IF_OF_Latch.getInstruction();
+			Instruction currentInstruction = new Instruction();
+			Operand rs1 = new Operand();
+			Operand rs2 = new Operand();
+			Operand rd = new Operand();
+			Operand jump = new Operand();
+			Operand imm = new Operand();
+			int registerSource1 = -1;
+			int registerSource2 = -1;
+			int registerDestination = -1;
+			int immediate = -1;
+			currentInstruction.setProgramCounter(currentPC);
+			currentInstruction.setOperationType(currentOperation);
+			switch(currentOperation){
+				//below till break correspond to R3I type instructions
+				case add:
+				case sub:
+				case mul:
+				case div:
+				case and:
+				case or:
+				case xor:
+				case slt:
+				case sll:
+				case srl:
+				case sra:
+					rs1.setOperandType(Operand.OperandType.Register);
+					registerSource1 = Integer.parseInt((binaryInstruction.substring(5, 10)), 2);
+					rs1.setValue(registerSource1);
+					currentInstruction.setSourceOperand1(rs1);
 
-			String inst_binary = Integer.toBinaryString(inst);
+					rs2.setOperandType(Operand.OperandType.Register);
+					registerSource2 = Integer.parseInt((binaryInstruction.substring(10, 15)), 2);
+					rs2.setValue(registerSource2);
+					currentInstruction.setSourceOperand2(rs2);
 
-			if(inst_binary.length() != 32){
+					rd.setOperandType(Operand.OperandType.Register);
+					registerDestination = Integer.parseInt((binaryInstruction.substring(15, 20)), 2);
+					rd.setValue(registerDestination);
+					currentInstruction.setDestinationOperand(rd);
+					break;
+				//below code till break corresponds to RI type, specifically for jmp
+				case jmp:
+					registerDestination = Integer.parseInt((binaryInstruction.substring(5, 10)), 2);
+					immediate = toInteger(binaryInstruction.substring(10, 32));
+					if(immediate != 0){
+						jump.setOperandType(Operand.OperandType.Immediate);
+						jump.setValue(immediate);
+					}
+					else{
+						jump.setOperandType(Operand.OperandType.Register);
+						jump.setValue(registerDestination);
+					}
+					currentInstruction.setDestinationOperand(jump);
+					break;
+				//below code till break corresponds to RI type, specifically for end
+				case end:
+					break;
+				//below code till break corresponds to R2I type instructions, specifically for beq, bnq, blt and bgt
+				case beq:
+				case bne:
+				case blt:
+				case bgt:
+					rs1.setOperandType(Operand.OperandType.Register);
+					registerSource1 = Integer.parseInt((binaryInstruction.substring(5, 10)), 2);
+					rs1.setValue(registerSource1);
+					currentInstruction.setSourceOperand1(rs1);
 
-				int limit = inst_binary.length();
-				String lRepeated = "";
+					rs2.setOperandType(Operand.OperandType.Register);
+					registerSource2 = Integer.parseInt((binaryInstruction.substring(10, 15)), 2);
+					rs2.setValue(registerSource2);
+					currentInstruction.setSourceOperand2(rs2);
 
-				if ((32 - limit) != 0) {
-					String s = "0";
-					int q = 32 - limit;
-					lRepeated = IntStream.range(0, q).mapToObj(i -> s).collect(Collectors.joining(""));
-				}
-				inst_binary += lRepeated;
+					imm.setOperandType(Operand.OperandType.Immediate);
+					immediate = toInteger(binaryInstruction.substring(15, 32));
+					imm.setValue(immediate);
+					currentInstruction.setDestinationOperand(imm);
+					break;
+				//below code till break corresponds to all remaining R2I type instructions
+				default:
+					rs1.setOperandType(Operand.OperandType.Register);
+					registerSource1 = Integer.parseInt((binaryInstruction.substring(5, 10)), 2);
+					rs1.setValue(registerSource1);
+					currentInstruction.setSourceOperand1(rs1);
 
+					rs2.setOperandType(Operand.OperandType.Immediate);
+					immediate = toInteger(binaryInstruction.substring(15, 32));
+					rs2.setValue(immediate);
+					currentInstruction.setSourceOperand2(rs2);
+
+					rd.setOperandType(Operand.OperandType.Register);
+					registerDestination = Integer.parseInt((binaryInstruction.substring(10, 15)), 2);
+					rd.setValue(registerDestination);
+					currentInstruction.setDestinationOperand(rd);
+					break;
 			}
 
-			//the first 5 bits will represent opcode so select the substring from instruction
-			String opcode_binary = inst_binary.substring(0, 5);
-
-			//convert the binary string to integer
-			int opcode_integer = Integer.parseInt(opcode_binary, 2);
-
-			//take operation object from operationType Array list
-			OperationType operation = operationType[opcode_integer];
-
-			Instruction i = new Instruction();
-
-			// Operand rs1;
-			int reg_no;
-
-			// Operand rs2;
-			// Operand rd;
-			String cons;
-			int cons_val;
-
-			if(operation.toString().equals("add")|| operation.toString().equals("sub")|| operation.toString().equals("mul")|| operation.toString().equals("div")|| operation.toString().equals("and")|| operation.toString().equals("or")|| operation.toString().equals("xor")|| operation.toString().equals("slt")|| operation.toString().equals("sll")|| operation.toString().equals("srl")|| operation.toString().equals("sra")){
-
-				Operand rs1 = new Operand();
-				rs1.setOperandType(OperandType.Register);
-				reg_no = Integer.parseInt(inst_binary.substring(5, 10), 2);
-				rs1.setValue(reg_no);
-
-				Operand rs2 = new Operand();
-				rs2.setOperandType(OperandType.Register);
-				reg_no = Integer.parseInt(inst_binary.substring(10, 15), 2);
-				rs2.setValue(reg_no);
-				
-				//destination register
-
-				Operand rd = new Operand();
-				rd.setOperandType(OperandType.Register);
-				reg_no = Integer.parseInt(inst_binary.substring(15, 20), 2);
-				rd.setValue(reg_no);
-
-				i.setOperationType(operationType[opcode_integer]);
-				i.setDestinationOperand(rd);
-				i.setSourceOperand1(rs1);
-				i.setSourceOperand2(rs2);
-			}
-
-			else if(operation.toString().equals("end")){
-				//terminate the simulator
-				i.setOperationType(operationType[opcode_integer]);
-			}
-
-			else if(operation.toString().equals("jmp")){
-				Operand op = new Operand();
-				//select substring from 10th to 32nd bit
-				cons = inst_binary.substring(10, 32);
-				cons_val = Integer.parseInt(cons, 2);
-
-				if (cons.charAt(0) == '1'){
-					//if the MSB is 1 we take two's complement
-					cons = twos_Complement(cons);
-					//upadte the cons_val because we are now considering the new cons i.e. 2's complement
-					cons_val = Integer.parseInt(cons, 2) * -1;
-				}
-
-				if (cons_val != 0){
-					op.setOperandType(OperandType.Immediate);
-					op.setValue(cons_val);
-				}
-				else{
-					reg_no = Integer.parseInt(inst_binary.substring(5, 10), 2);
-					op.setOperandType(OperandType.Register);
-					op.setValue(reg_no);
-				}
-
-				i.setOperationType(operationType[opcode_integer]);
-				i.setDestinationOperand(op);
-			}
-
-			else if(operation.toString().equals("beq")|| operation.toString().equals("bne")|| operation.toString().equals("blt")|| operation.toString().equals("bgt")){
-
-				Operand rs1 = new Operand();
-				rs1.setOperandType(OperandType.Register);
-
-				reg_no = Integer.parseInt(inst_binary.substring(5, 10), 2);
-				rs1.setValue(reg_no);
-
-				// destination register
-				Operand rs2 = new Operand();
-				rs2.setOperandType(OperandType.Register);
-				reg_no = Integer.parseInt(inst_binary.substring(10, 15), 2);
-				rs2.setValue(reg_no);
-
-				// Immediate value
-				Operand rd = new Operand();
-				rd.setOperandType(OperandType.Immediate);
-				cons = inst_binary.substring(15, 32);
-				cons_val = Integer.parseInt(cons, 2);
-				if (cons.charAt(0) == '1'){
-					cons = twos_Complement(cons);
-					cons_val = Integer.parseInt(cons, 2) * -1;
-				}
-
-				rd.setValue(cons_val);
-
-				i.setOperationType(operationType[opcode_integer]);
-				i.setDestinationOperand(rd);
-				i.setSourceOperand1(rs1);
-				i.setSourceOperand2(rs2);
-			}
-
-			else {
-				// Source register 1
-				Operand rs1 = new Operand();
-				rs1.setOperandType(OperandType.Register);
-				reg_no = Integer.parseInt(inst_binary.substring(5, 10), 2);
-				rs1.setValue(reg_no);
-
-				// Destination register
-				Operand rd = new Operand();
-				rd.setOperandType(OperandType.Register);
-				reg_no = Integer.parseInt(inst_binary.substring(10, 15), 2);
-				rd.setValue(reg_no);
-
-				// Immediate values
-				Operand rs2 = new Operand();
-				rs2.setOperandType(OperandType.Immediate);
-				cons = inst_binary.substring(15, 32);
-				cons_val = Integer.parseInt(cons, 2);
-
-				if (cons.charAt(0) == '1'){
-					cons = twos_Complement(cons);
-					cons_val = Integer.parseInt(cons, 2) * -1;
-				}
-				rs2.setValue(cons_val);
-
-				i.setOperationType(operationType[opcode_integer]);
-				i.setDestinationOperand(rd);
-				i.setSourceOperand1(rs1);
-				i.setSourceOperand2(rs2);
-			}
-
-			
+			OF_EX_Latch.setInstruction(currentInstruction);
 			IF_OF_Latch.setOF_enable(false);
 			OF_EX_Latch.setEX_enable(true);
 
+			System.out.println("\nOF Stage");
+			System.out.println("Instruction = " + binaryInstruction);
+			if(registerSource1 != -1)
+				System.out.println("rs1 = " + registerSource1);
+			if(registerSource2 != -1)
+				System.out.println("rs2 = " + registerSource2);
+			if(registerDestination != -1)
+				System.out.println("rd = " + registerDestination);
+			if(immediate != -1)
+				System.out.println("imm = " + immediate);
 		}
 	}
 

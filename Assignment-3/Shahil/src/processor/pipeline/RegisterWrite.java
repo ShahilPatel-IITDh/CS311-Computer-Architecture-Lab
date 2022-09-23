@@ -2,8 +2,6 @@ package processor.pipeline;
 
 import generic.Simulator;
 import processor.Processor;
-
-
 import generic.Instruction;
 import generic.Instruction.OperationType;
 
@@ -21,68 +19,44 @@ public class RegisterWrite {
 	
 	public void performRW()
 	{
-		if(MA_RW_Latch.isRW_enable())
-		{
-			//TODO
-			
-			// if instruction being processed is an end instruction, remember to call Simulator.setSimulationComplete(true);
-			Instruction command = MA_RW_Latch.getInst();
-			OperationType operationType = command.getOperationType();
-
-
-			int alu_result = MA_RW_Latch.getALU();
-			int load_result = MA_RW_Latch.getLoadResult();
-			int destination = command.getDestinationOperand().getValue();
-
-
-			// if(operationType.equals(store)){
-
-			// }
-
-			// if(operationType.equals(jmp)){
-
-			// }
-
-			// if(operationType.equals(beq)){
-
-			// }
-
-			// if(operationType.equals(bne)){
-
-			// }
-
-			// if(operationType.equals(blt)){
-
-			// }
-
-			// if(operationType.equals(bgt)){
-
-			// }
-
-			switch(operationType){
-				case load:
-					destination = command.getDestinationOperand().getValue();
-
-					//loading the load_result in destination register.
-					containingProcessor.getRegisterFile().setValue(destination, load_result);
+		if(MA_RW_Latch.isRW_enable()) {
+			Instruction currentInstruction = MA_RW_Latch.getInstruction();
+			OperationType currentOperation = currentInstruction.getOperationType();
+			int rd = -1;
+			int ldResult = -1;
+			int aluResult = -1;
+			switch (currentOperation){
+				case store:
+				case jmp:
+				case beq:
+				case blt:
+				case bgt:
 					break;
-				
 				case end:
-					//terminating the process of Simulator
 					Simulator.setSimulationComplete(true);
 					break;
-					
+				case load:
+					ldResult = MA_RW_Latch.getLdResult();
+					rd = currentInstruction.getDestinationOperand().getValue();
+					containingProcessor.getRegisterFile().setValue(rd, ldResult);
+					break;
 				default:
-					destination = command.getDestinationOperand().getValue();
-					
-					//loading 
-					containingProcessor.getRegisterFile().setValue(destination, alu_result);
+					rd = currentInstruction.getDestinationOperand().getValue();
+					aluResult = MA_RW_Latch.getAluResult();
+					containingProcessor.getRegisterFile().setValue(rd, aluResult);
 					break;
 			}
 			
-			
 			MA_RW_Latch.setRW_enable(false);
 			IF_EnableLatch.setIF_enable(true);
+
+			System.out.println("\nRW Stage");
+			if(rd != -1){
+				if(ldResult != -1)
+					System.out.println("Storing = " + ldResult + " at register = " + rd);
+				else
+					System.out.println("Storing = " + aluResult + " at register = " + rd);
+			}
 		}
 	}
 
