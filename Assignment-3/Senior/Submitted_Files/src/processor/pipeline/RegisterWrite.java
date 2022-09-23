@@ -19,8 +19,7 @@ public class RegisterWrite {
 
 	public void performRW()
 	{
-		if(MA_RW_Latch.isRW_enable())
-		{
+		if(MA_RW_Latch.isRW_enable()){
 			Instruction cmd = MA_RW_Latch.getInstruction();
 			int alu_output = MA_RW_Latch.getALU_Output();
 			OperationType operationType = cmd.getOperationType();

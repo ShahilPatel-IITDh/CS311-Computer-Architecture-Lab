@@ -1,7 +1,7 @@
 package processor.pipeline;
 
 public class RegisterFile {
-	static int[] registerFile;
+	int[] registerFile;
 	int programCounter;
 	
 	public RegisterFile()

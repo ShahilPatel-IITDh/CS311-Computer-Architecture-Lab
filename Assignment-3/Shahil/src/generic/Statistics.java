@@ -31,15 +31,11 @@ public class Statistics {
 	public static void setNumberOfInstructions(int numberOfInstructions) {
 		Statistics.numberOfInstructions = numberOfInstructions;
 	}
-
+	
 	public static void setNumberOfCycles(int numberOfCycles) {
 		Statistics.numberOfCycles = numberOfCycles;
 	}
 
-	public static int getNumberOfInstructions(){
-		return numberOfInstructions;
-	}
-	public static int getNumberOfCycles(){
-		return numberOfCycles;
-	}
+	public static int getNumberOfInstructions() { return numberOfInstructions; }
+	public static int getNumberOfCycles() { return numberOfCycles; }
 }

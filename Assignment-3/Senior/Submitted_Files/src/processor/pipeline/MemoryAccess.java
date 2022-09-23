@@ -20,12 +20,12 @@ public class MemoryAccess {
 		if(EX_MA_Latch.isMA_enable())
 		{
 			Instruction instruction = EX_MA_Latch.getInstruction();
-			int ALU_output = EX_MA_Latch.getALU_result();
-			MA_RW_Latch.setALU_Output(ALU_output);
+			int ALU_result = EX_MA_Latch.getALU_result();
+			MA_RW_Latch.setALU_Output(ALU_result);
 			OperationType Operation_Type = instruction.getOperationType();
 			if(Operation_Type.toString().equals("store")){
 				int res_st = containingProcessor.getRegisterFile().getValue(instruction.getSourceOperand1().getValue());
-				containingProcessor.getMainMemory().setWord(ALU_output, res_st);
+				containingProcessor.getMainMemory().setWord(ALU_result, res_st);
 			}
 			else if(Operation_Type.toString().equals("load")){
 				int res_ld = containingProcessor.getMainMemory().getWord(ALU_output);
