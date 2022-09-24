@@ -23,13 +23,29 @@ public class InstructionFetch {
 		{
 			if(EX_IF_Latch.isEX_IF_enable()) {
 				int branchPC = EX_IF_Latch.getPC();
-				containingProcessor.getRegisterFile().setProgramCounter(branchPC);
+				int BP;
+				BP = branchPC;
+				containingProcessor.getRegisterFile().setProgramCounter(BP);
+
 				EX_IF_Latch.setEX_IF_enable(false);
 			}
 
 			int currentPC = containingProcessor.getRegisterFile().getProgramCounter();
-
+			int CP;
+			int NI;
 			int newInstruction = containingProcessor.getMainMemory().getWord(currentPC);
+			
+			//dead
+			int x = 100;
+			if(x>10001){
+				x--;
+			}
+			else if(x==2000){
+				x++;
+			}
+
+			CP = currentPC;
+			NI = newInstruction;
 
 			IF_OF_Latch.setInstruction(newInstruction);
 			containingProcessor.getRegisterFile().setProgramCounter(currentPC + 1);

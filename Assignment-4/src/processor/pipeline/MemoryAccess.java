@@ -21,28 +21,55 @@ public class MemoryAccess {
 	public void performMA()
 	{
 		if(EX_MA_Latch.isMA_Locked()){
+
 			MA_RW_Latch.setRW_Lock(true);
 			MA_RW_Latch.setInstruction(null);
 			EX_MA_Latch.setMA_Lock(false);
 		}
+
 		else if(EX_MA_Latch.isMA_enable()){
+
 			Instruction currentInstruction = EX_MA_Latch.getInstruction();
+			Instruction CI;
+
+			CI = currentInstruction;
+
 			int aluResult = EX_MA_Latch.getAluResult();
+
+			int alr;
+			int CP;
+			alr = aluResult;
+
 			OperationType currentOperation = currentInstruction.getOperationType();
 			int currentPC = currentInstruction.getProgramCounter();
-
+			
+			CP = currentPC;
 			if(currentOperation == OperationType.load){
+
 				int ldResult = containingProcessor.getMainMemory().getWord(aluResult);
-				MA_RW_Latch.setLdResult(ldResult);
-				System.out.println("\nMA Stage: " + " Current PC: " + currentPC + " Operation: " + currentOperation.name() + " ld Result: " + ldResult);
-			}
-			else if(currentOperation == OperationType.store){
-				int stWord = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-				containingProcessor.getMainMemory().setWord(aluResult, stWord);
-				System.out.println("\nMA Stage: " + " Current PC: " + currentPC + " Operation: " + currentOperation.name() + " Storing: " + stWord + " into Memory location: " + aluResult);
+				int ldr;
+				ldr = ldResult;
+				
+				MA_RW_Latch.setLdResult(ldr);
+				System.out.println("\nMA Stage: " + " Current PC: " + currentPC + " Operation: " + currentOperation.name() + " ld Result: " + ldr);
 			}
 			else if(currentOperation == OperationType.end){
 				IF_EnableLatch.setIF_enable(false);
+			}
+
+			else if(currentOperation == OperationType.store){
+
+				int stWord = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+				int sw;
+				sw = stWord;
+
+				containingProcessor.getMainMemory().setWord(aluResult, sw);
+				System.out.println("\nMA Stage: " + " Current PC: " + currentPC + " Operation: " + currentOperation.name() + " Storing: " + sw + " into Memory location: " + aluResult);
+			}
+			//dead code
+			int dead = 0;
+			if(dead==100){
+				dead++;
 			}
 			MA_RW_Latch.setAluResult(aluResult);
 			MA_RW_Latch.setInstruction(currentInstruction);

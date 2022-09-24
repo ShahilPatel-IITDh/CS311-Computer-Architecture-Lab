@@ -38,10 +38,21 @@ public class Execute {
 		}
 		else if(OF_EX_Latch.isEX_enable()){
 			Instruction currentInstruction = OF_EX_Latch.getInstruction();
+
+			Instruction CI;
+			CI = currentInstruction;
+
 			int currentPC = currentInstruction.getProgramCounter() - 1;
+
+			int CP;
+			CP = currentPC;
+
 			OperationType currentOperation = currentInstruction.getOperationType();
 			int sourceOperand1 = -1, sourceOperand2 = -1, immediate, remainder;
 			int aluResult = -1;
+
+			OperationType CO;
+			CO = currentOperation;
 
 			//Creating set of branch instructions and end instruction
 			Set<String> BranchInstructions = new HashSet<String>();
@@ -54,146 +65,157 @@ public class Execute {
 			BranchInstructions.add("end");
 
 			if(BranchInstructions.contains(currentOperation.name())){
+
 				Statistics.setNumberOfBranchesTaken(Statistics.getNumberOfBranchesTaken() + 2);
 				IF_EnableLatch.setIF_enable(false);
 				IF_OF_Latch.setOF_enable(false);
 				OF_EX_Latch.setEX_enable(false);
+
 			}
 
 			switch (currentOperation){
+
 				case add:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					int rs1;
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
-					aluResult = sourceOperand1 + sourceOperand2;
+					int rs2;
+					rs2 = sourceOperand2;
+
+					aluResult = rs1 + rs2;
 					break;
-				case addi:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					aluResult = sourceOperand1 + immediate;
-					break;
+				
 				case sub:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
-					aluResult = sourceOperand1 - sourceOperand2;
+					rs2 = sourceOperand2;
+
+					aluResult = rs1 - rs2;
 					break;
-				case subi:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					aluResult = sourceOperand1 - immediate;
-					break;
+				
 				case mul:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+					
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					aluResult = sourceOperand1 * sourceOperand2;
 					break;
-				case muli:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					aluResult = sourceOperand1 * immediate;
-					break;
+				
 				case div:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					aluResult = sourceOperand1 / sourceOperand2;
 					remainder = (sourceOperand1 % sourceOperand2);
 					containingProcessor.getRegisterFile().setValue(31, remainder);
 					break;
-				case divi:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					aluResult = sourceOperand1 / immediate;
-					remainder = (sourceOperand1 % immediate);
-					containingProcessor.getRegisterFile().setValue(31, remainder);
-					break;
+				
 				case and:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					aluResult = sourceOperand1 & sourceOperand2;
 					break;
-				case andi:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					aluResult = sourceOperand1 & immediate;
-					break;
+
+				
 				case or:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+					
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					aluResult = sourceOperand1 | sourceOperand2;
 					break;
-				case ori:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					aluResult = sourceOperand1 | immediate;
-					break;
+				
 				case xor:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					aluResult = sourceOperand1 ^ sourceOperand2;
 					break;
-				case xori:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					aluResult = sourceOperand1 ^ immediate;
-					break;
+				
 				case slt:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					if(sourceOperand1 < sourceOperand2)
 						aluResult = 1;
 					else
 						aluResult = 0;
 					break;
-				case slti:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					if(sourceOperand1 < immediate)
-						aluResult = 1;
-					else
-						aluResult = 0;
-					break;
+
 				case sll:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					aluResult = sourceOperand1 << sourceOperand2;
 					break;
-				case slli:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					aluResult = sourceOperand1 << immediate;
-					break;
+				
 				case srl:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					aluResult = sourceOperand1 >>> sourceOperand2;
 					break;
-				case srli:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					aluResult = sourceOperand1 >>> immediate;
-					break;
+				
 				case sra:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					aluResult = sourceOperand1 >> sourceOperand2;
 					break;
-				case srai:
-					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
-					immediate = currentInstruction.getSourceOperand2().getValue();
-					aluResult = sourceOperand1 >> immediate;
-					break;
+
 				case load:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					immediate = currentInstruction.getSourceOperand2().getValue();
+					int imx = immediate;
 					aluResult = sourceOperand1 + immediate;
 					break;
+
 				case store:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getDestinationOperand().getValue());
+					rs1 = sourceOperand1;
+
 					immediate = currentInstruction.getSourceOperand2().getValue();
+					imx = immediate;
 					aluResult = sourceOperand1 + immediate;
 					break;
+
 				case jmp:
 					OperandType jump = currentInstruction.getDestinationOperand().getOperandType();
-					if(jump == OperandType.Register){
+					OperandType j;
+					j = jump;
+					if(j == OperandType.Register){
 						immediate = containingProcessor.getRegisterFile().getValue(currentInstruction.getDestinationOperand().getValue());
 					}
 					else{
@@ -202,42 +224,176 @@ public class Execute {
 					aluResult = currentPC + immediate;
 					EX_IF_Latch.setEX_IF_enable(true, aluResult);
 					break;
+
 				case beq:
+
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					immediate = currentInstruction.getDestinationOperand().getValue();
-					if(sourceOperand1 == sourceOperand2){
+					imx = immediate;
+
+					if(rs1 == rs2){
 						aluResult = currentPC + immediate;
 						EX_IF_Latch.setEX_IF_enable(true, aluResult);
 					}
 					break;
+
 				case bne:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					immediate = currentInstruction.getDestinationOperand().getValue();
-					if(sourceOperand1 != sourceOperand2){
+					imx = immediate;
+
+					if(rs1 != rs2){
 						aluResult = currentPC + immediate;
 						EX_IF_Latch.setEX_IF_enable(true, aluResult);
 					}
 					break;
+
 				case blt:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					immediate = currentInstruction.getDestinationOperand().getValue();
-					if(sourceOperand1 < sourceOperand2){
+					imx = immediate;
+
+					if(rs1 < rs2){
 						aluResult = currentPC + immediate;
 						EX_IF_Latch.setEX_IF_enable(true, aluResult);
 					}
 					break;
+
 				case bgt:
 					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+					
 					sourceOperand2 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand2().getValue());
+					rs2 = sourceOperand2;
+
 					immediate = currentInstruction.getDestinationOperand().getValue();
-					if(sourceOperand1 > sourceOperand2){
+					imx = immediate;
+
+					if(rs1 > rs2){
 						aluResult = currentPC + immediate;
 						EX_IF_Latch.setEX_IF_enable(true, aluResult);
 					}
 					break;
+
+				case addi:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					// int rs1;
+					rs1 = sourceOperand1;
+
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					// int imx;
+					imx = immediate;
+					aluResult = rs1 + immediate;
+					break;
+
+				case subi:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+					immediate = currentInstruction.getSourceOperand2().getValue();
+
+					aluResult = sourceOperand1 - immediate;
+					break;
+
+				case muli:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 * immediate;
+					break;
+
+				case divi:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					imx = immediate;
+
+					aluResult = sourceOperand1 / immediate;
+					remainder = (sourceOperand1 % immediate);
+					containingProcessor.getRegisterFile().setValue(31, remainder);
+					break;
+				
+				case andi:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
+					immediate = currentInstruction.getSourceOperand2().getValue();
+
+					aluResult = sourceOperand1 & immediate;
+					break;
+				
+				case ori:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+					immediate = currentInstruction.getSourceOperand2().getValue();
+
+					aluResult = sourceOperand1 | immediate;
+					break;
+
+				case xori:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 ^ immediate;
+					break;
+
+				case slti:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					imx = immediate;
+
+					if(sourceOperand1 < immediate)
+						aluResult = 1;
+					else
+						aluResult = 0;
+					break;
+
+				case slli:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					imx = immediate;
+					aluResult = sourceOperand1 << immediate;
+					break;
+
+				case srli:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					imx = immediate;
+
+					aluResult = sourceOperand1 >>> immediate;
+					break;
+
+				case srai:
+					sourceOperand1 = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
+					rs1 = sourceOperand1;
+					
+					immediate = currentInstruction.getSourceOperand2().getValue();
+					aluResult = sourceOperand1 >> immediate;
+					break;
+
 				case end:
 					break;
 				default:
