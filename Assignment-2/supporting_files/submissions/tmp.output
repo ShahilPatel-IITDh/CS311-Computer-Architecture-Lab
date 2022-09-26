@@ -1,0 +1,125 @@
+Buildfile: /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/build.xml
+
+build-subprojects:
+
+init:
+    [mkdir] Created dir: /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/bin
+     [copy] Copying 1 file to /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/bin
+
+build-project:
+     [echo] CustomISAAssembler: /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/build.xml
+    [javac] Compiling 8 source files to /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/bin
+    [javac] warning: [options] bootstrap class path not set in conjunction with -source 8
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:122: warning: as of release 10, 'var' is a restricted local variable type and cannot be used for type declarations or as the element type of an array
+    [javac] 			for (var value: ParsedProgram.data) {
+    [javac] 			         ^
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:126: warning: as of release 10, 'var' is a restricted local variable type and cannot be used for type declarations or as the element type of an array
+    [javac] 			for (var inst: ParsedProgram.code) {
+    [javac] 			         ^
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:19: error: cannot infer type arguments for HashMap<K,V>
+    [javac] 	public static Map<Instruction.OperationType, String> mapping = new HashMap<>() {{
+    [javac] 	                                                                          ^
+    [javac]   reason: '<>' with anonymous inner classes is not supported in -source 8
+    [javac]     (use -source 9 or higher to enable '<>' with anonymous inner classes)
+    [javac]   where K,V are type-variables:
+    [javac]     K extends Object declared in class HashMap
+    [javac]     V extends Object declared in class HashMap
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:122: error: cannot find symbol
+    [javac] 			for (var value: ParsedProgram.data) {
+    [javac] 			     ^
+    [javac]   symbol:   class var
+    [javac]   location: class Simulator
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:126: error: cannot find symbol
+    [javac] 			for (var inst: ParsedProgram.code) {
+    [javac] 			     ^
+    [javac]   symbol:   class var
+    [javac]   location: class Simulator
+    [javac] 3 errors
+    [javac] 3 warnings
+
+BUILD FAILED
+/home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/build.xml:31: Compile failed; see the compiler error output for details.
+
+Total time: 0 seconds
+Buildfile: /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/build.xml
+
+build-subprojects:
+
+init:
+
+build-project:
+     [echo] CustomISAAssembler: /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/build.xml
+    [javac] Compiling 3 source files to /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/bin
+    [javac] warning: [options] bootstrap class path not set in conjunction with -source 8
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:122: warning: as of release 10, 'var' is a restricted local variable type and cannot be used for type declarations or as the element type of an array
+    [javac] 			for (var value: ParsedProgram.data) {
+    [javac] 			         ^
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:126: warning: as of release 10, 'var' is a restricted local variable type and cannot be used for type declarations or as the element type of an array
+    [javac] 			for (var inst: ParsedProgram.code) {
+    [javac] 			         ^
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:19: error: cannot infer type arguments for HashMap<K,V>
+    [javac] 	public static Map<Instruction.OperationType, String> mapping = new HashMap<>() {{
+    [javac] 	                                                                          ^
+    [javac]   reason: '<>' with anonymous inner classes is not supported in -source 8
+    [javac]     (use -source 9 or higher to enable '<>' with anonymous inner classes)
+    [javac]   where K,V are type-variables:
+    [javac]     K extends Object declared in class HashMap
+    [javac]     V extends Object declared in class HashMap
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:122: error: cannot find symbol
+    [javac] 			for (var value: ParsedProgram.data) {
+    [javac] 			     ^
+    [javac]   symbol:   class var
+    [javac]   location: class Simulator
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:126: error: cannot find symbol
+    [javac] 			for (var inst: ParsedProgram.code) {
+    [javac] 			     ^
+    [javac]   symbol:   class var
+    [javac]   location: class Simulator
+    [javac] 3 errors
+    [javac] 3 warnings
+
+BUILD FAILED
+/home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/build.xml:31: Compile failed; see the compiler error output for details.
+
+Total time: 0 seconds
+Buildfile: /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/build.xml
+
+build-subprojects:
+
+init:
+
+build-project:
+     [echo] CustomISAAssembler: /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/build.xml
+    [javac] Compiling 3 source files to /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/bin
+    [javac] warning: [options] bootstrap class path not set in conjunction with -source 8
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:122: warning: as of release 10, 'var' is a restricted local variable type and cannot be used for type declarations or as the element type of an array
+    [javac] 			for (var value: ParsedProgram.data) {
+    [javac] 			         ^
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:126: warning: as of release 10, 'var' is a restricted local variable type and cannot be used for type declarations or as the element type of an array
+    [javac] 			for (var inst: ParsedProgram.code) {
+    [javac] 			         ^
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:19: error: cannot infer type arguments for HashMap<K,V>
+    [javac] 	public static Map<Instruction.OperationType, String> mapping = new HashMap<>() {{
+    [javac] 	                                                                          ^
+    [javac]   reason: '<>' with anonymous inner classes is not supported in -source 8
+    [javac]     (use -source 9 or higher to enable '<>' with anonymous inner classes)
+    [javac]   where K,V are type-variables:
+    [javac]     K extends Object declared in class HashMap
+    [javac]     V extends Object declared in class HashMap
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:122: error: cannot find symbol
+    [javac] 			for (var value: ParsedProgram.data) {
+    [javac] 			     ^
+    [javac]   symbol:   class var
+    [javac]   location: class Simulator
+    [javac] /home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/src/generic/Simulator.java:126: error: cannot find symbol
+    [javac] 			for (var inst: ParsedProgram.code) {
+    [javac] 			     ^
+    [javac]   symbol:   class var
+    [javac]   location: class Simulator
+    [javac] 3 errors
+    [javac] 3 warnings
+
+BUILD FAILED
+/home/administrator/Documents/CA/CS311-Computer-Architecture-Lab/Assignment-2/supporting_files/submissions/build.xml:31: Compile failed; see the compiler error output for details.
+
+Total time: 0 seconds
