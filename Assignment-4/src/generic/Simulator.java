@@ -18,7 +18,8 @@ public class Simulator {
 	{
 		Simulator.processor = p;
 		loadProgram(assemblyProgramFile);
-		
+
+		//initially set simulation complete to false as the simulation hasn't completed
 		simulationComplete = false;
 	}
 	
@@ -26,7 +27,7 @@ public class Simulator {
 	{
 		try {
 			// create a reader
-			System.out.println(assemblyProgramFile);
+			// System.out.println(assemblyProgramFile);
 			FileInputStream file = new FileInputStream(assemblyProgramFile);
 			BufferedInputStream reader = new BufferedInputStream(file);
 
@@ -83,12 +84,22 @@ public class Simulator {
 		Statistics.setNumberOfInstructions(0);
 		Statistics.setNumberOfCycles(0);
 
-		while(simulationComplete == false)
+		while(!simulationComplete)
 		{
+			//executing instructions according to given in the question
+			//perfrom RW
 			processor.getRWUnit().performRW();
+			
+			// perform MA
 			processor.getMAUnit().performMA();
+			
+			//perform EX
 			processor.getEXUnit().performEX();
+			
+			//perform OF
 			processor.getOFUnit().performOF();
+			
+			//perform IF
 			processor.getIFUnit().performIF();
 			Clock.incrementClock();
 

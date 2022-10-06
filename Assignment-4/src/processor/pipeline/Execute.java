@@ -31,14 +31,18 @@ public class Execute {
 	
 	public void performEX()
 	{
+		Instruction cmd = null;
+
 		if(OF_EX_Latch.isEX_Locked()){
 			EX_MA_Latch.setMA_Lock(true);
 			OF_EX_Latch.setEX_Lock(false);
 			EX_MA_Latch.setInstruction(null);
 		}
+
 		else if(OF_EX_Latch.isEX_enable()){
 			Instruction currentInstruction = OF_EX_Latch.getInstruction();
 
+			//using abbrevations to shorten the code
 			Instruction CI;
 			CI = currentInstruction;
 

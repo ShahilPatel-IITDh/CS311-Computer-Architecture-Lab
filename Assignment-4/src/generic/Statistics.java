@@ -31,19 +31,35 @@ public class Statistics {
 		}
 	}
 
-	public static void setNumberOfInstructions(int numberOfInstructions) { Statistics.numberOfInstructions = numberOfInstructions; }
-	public static void setNumberOfCycles(int numberOfCycles) {
+	public static void setNumberOfInstructions(int numberOfInstructions){
+		Statistics.numberOfInstructions = numberOfInstructions; 
+	}
+	public static void setNumberOfCycles(int numberOfCycles){
 		Statistics.numberOfCycles = numberOfCycles;
 	}
-	public static void setNumberOfOFStageInstructions(int numberOfInstructions ){ Statistics.numberOfOFStageInstructions = numberOfInstructions; }
-	public static void setNumberOfBranchesTaken(int numberOfBranches){ Statistics.numberOfBranchesTaken = numberOfBranches; }
-	public static void setNumberOfRWStageInstructions(int numberOfInstructions){ Statistics.numberOfRWStageInstructions = numberOfInstructions; }
+	public static int getNumberOfInstructions(){
+		return numberOfInstructions;
+	}
+	public static int getNumberOfCycles(){
+		return numberOfCycles;
+	}
+	public static void setNumberOfOFStageInstructions(int numberOfInstructions){
+		Statistics.numberOfOFStageInstructions = numberOfInstructions;
+	}
+	public static void setNumberOfBranchesTaken(int numberOfBranches){
+		Statistics.numberOfBranchesTaken = numberOfBranches;
+	}
+	public static void setNumberOfRWStageInstructions(int numberOfInstructions){
+		Statistics.numberOfRWStageInstructions = numberOfInstructions;
+	}
 
-	public static int getNumberOfInstructions() { return numberOfInstructions; }
-	public static int getNumberOfCycles() { return numberOfCycles; }
-	public static int getNumberOfOFStageInstructions() { return numberOfOFStageInstructions; }
-	public static int getNumberOfBranchesTaken() { return numberOfBranchesTaken; }
-	public static int getNumberOfRWStageInstructions() { return numberOfRWStageInstructions; }
+	public static int getNumberOfOFStageInstructions(){
+		return numberOfOFStageInstructions;
+	}
+	public static int getNumberOfBranchesTaken(){
+		return numberOfBranchesTaken;
+	}
+	public static int getNumberOfRWStageInstructions(){
+		return numberOfRWStageInstructions;
+	}
 }
-
-
