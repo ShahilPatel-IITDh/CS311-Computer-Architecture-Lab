@@ -112,4 +112,7 @@ public class Simulator {
 	{
 		simulationComplete = value;
 	}
+
+    public static void assemble(String string) {
+    }
 }
