@@ -66,129 +66,161 @@ public class Simulator {
 				String opCode;
 				Instruction.OperationType ins_string = current_ins.getOperationType();
 				switch (ins_string.name()) {
+
 					case "add":
 						r3_type = true;
 						opCode = "00000";
 						break;
-					case "addi":
-						r2i_type = true;
-						opCode = "00001";
-						break;
+					
 					case "sub":
 						r3_type = true;
 						opCode = "00010";
 						break;
-					case "subi":
-						r2i_type = true;
-						opCode = "00011";
-						break;
+					
 					case "mul":
 						r3_type = true;
 						opCode = "00100";
 						break;
-					case "muli":
-						r2i_type = true;
-						opCode = "00101";
-						break;
+					
 					case "div":
 						r3_type = true;
 						opCode = "00110";
 						break;
-					case "divi":
-						r2i_type = true;
-						opCode = "00111";
-						break;
+					
 					case "and":
 						r3_type = true;
 						opCode = "01000";
 						break;
-					case "andi":
-						r2i_type = true;
-						opCode = "01001";
-						break;
+					
 					case "or":
 						r3_type = true;
 						opCode = "01010";
 						break;
-					case "ori":
-						r2i_type = true;
-						opCode = "01011";
-						break;
+					
 					case "xor":
 						r3_type = true;
 						opCode = "01100";
 						break;
+
+					case "addi":
+						r2i_type = true;
+						opCode = "00001";
+						break;
+					
+					case "subi":
+						r2i_type = true;
+						opCode = "00011";
+						break;
+
+					case "muli":
+						r2i_type = true;
+						opCode = "00101";
+						break;
+
+					case "divi":
+						r2i_type = true;
+						opCode = "00111";
+						break;
+
+					case "andi":
+						r2i_type = true;
+						opCode = "01001";
+						break;	
+					
+					case "ori":
+						r2i_type = true;
+						opCode = "01011";
+						break;
+
 					case "xori":
 						r2i_type = true;
 						opCode = "01101";
 						break;
+
 					case "slt":
 						r3_type = true;
 						opCode = "01110";
 						break;
+
 					case "slti":
 						r2i_type = true;
 						opCode = "01111";
 						break;
+
 					case "sll":
 						r3_type = true;
 						opCode = "10000";
 						break;
+
 					case "slli":
 						r2i_type = true;
 						opCode = "10001";
 						break;
+
 					case "srl":
 						r3_type = true;
 						opCode = "10010";
 						break;
+
 					case "srli":
 						r2i_type = true;
 						opCode = "10011";
 						break;
+
 					case "sra":
 						r3_type = true;
 						opCode = "10100";
 						break;
+
 					case "srai":
 						r2i_type = true;
 						opCode = "10101";
 						break;
+
 					case "load":
 						r2i_type = true;
 						opCode = "10110";
 						break;
+
 					case "store":
 						r2i_type = true;
 						opCode = "10111";
 						break;
+
 					case "jmp":
 						ri_type = true;
 						opCode = "11000";
 						break;
+
 					case "beq":
 						r2i_type = true;
 						opCode = "11001";
 						break;
+
 					case "bne":
 						r2i_type = true;
 						opCode = "11010";
 						break;
+
 					case "blt":
 						r2i_type = true;
 						opCode = "11011";
 						break;
+
 					case "bgt":
 						r2i_type = true;
 						opCode = "11100";
 						break;
+
 					case "end":
 						ri_type = true;
 						opCode = "11101";
 						break;
+
 					default:
 						opCode = "";
 						break;
+						
 				}
 				if (r3_type) {
 					binary_ins += opCode;
