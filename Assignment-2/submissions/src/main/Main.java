@@ -12,7 +12,7 @@ public class Main {
 			Misc.printErrorAndExit("usage: java -jar <path-to-jar-file> <path-to-assembly-program> <path-to-object-file>\n");
 		}		
 		
-		Simulator.setupSimulation(args[0]);
+		Simulator.setupSimulation(args[0], null);
 		Simulator.assemble(args[1]);
 	}
 
