@@ -4,7 +4,6 @@ import generic.Instruction;
 import generic.Operand;
 import processor.Processor;
 
-import java.nio.ByteBuffer;
 
 import generic.Instruction.OperationType;
 
@@ -24,24 +23,11 @@ public class OperandFetch {
 	public static String twoscomplement(StringBuffer str)
 	{
 		int n = str.length();
-		
-		int x = 100;
-			x = x+100;
-			if(x>400){
-				x--;
-			}
 
 		int i;
 		for (i = n-1 ; i >= 0 ; i--)
 			if (str.charAt(i) == '1')
 				break;
-
-
-		x = 100;
-			x = x+100;
-			if(x>400){
-				x--;
-			}
 
 		if (i == -1)
 			return "1" + str;
@@ -87,13 +73,6 @@ public class OperandFetch {
 			int currentPC = containingProcessor.getRegisterFile().getProgramCounter();
 			String binaryInstruction =  toBinary(Instruction, 32);
 
-			int i;
-
-			i = Instruction;
-			i++;
-			i--;
-			i*=100;
-
 			OperationType[] operationTypes = OperationType.values(); //getting all operation types from OperationType enum
 			int opCodeInt = Integer.parseInt(binaryInstruction.substring(0, 5), 2);
 			OperationType currentOperation = operationTypes[opCodeInt];
@@ -106,30 +85,14 @@ public class OperandFetch {
 			Operand imm = new Operand();
 			int registerSource1 = -1;
 
-			i = Instruction;
-			i++;
-			i--;
-			i*=100;
 			int registerSource2 = -1;
 			int registerDestination = -1;
 
-			i = Instruction;
-			i++;
-			i--;
-			i*=100;
 			int immediate = -1;
 			currentInstruction.setProgramCounter(currentPC);
 
-			i = Instruction;
-			i++;
-			i--;
-			i*=100;
 			currentInstruction.setOperationType(currentOperation);
 
-			i = Instruction;
-			i++;
-			i--;
-			i*=100;
 			switch(currentOperation){
 				//below till break correspond to R3I type instructions
 				case add:
@@ -184,12 +147,6 @@ public class OperandFetch {
 					registerSource1 = Integer.parseInt((binaryInstruction.substring(5, 10)), 2);
 					rs1.setValue(registerSource1);
 					currentInstruction.setSourceOperand1(rs1);
-
-
-					i = Instruction;
-					i++;
-					i--;
-					i*=100;
 
 					rs2.setOperandType(Operand.OperandType.Register);
 					registerSource2 = Integer.parseInt((binaryInstruction.substring(10, 15)), 2);

@@ -24,20 +24,10 @@ public class MemoryAccess {
 			OperationType currentOperation = currentInstruction.getOperationType();
 
 			Instruction CI;
-			int x = 100;
-			x = x+100;
-			if(x>400){
-				x--;
-			}
 
 			System.out.println("\nMA Stage");
 
 			CI = currentInstruction;
-			x = 100;
-			x = x+100;
-			if(x>400){
-				x--;
-			}
 
 			if(currentOperation == OperationType.load){
 				System.out.println("Operation = " + currentOperation.name());
@@ -46,22 +36,11 @@ public class MemoryAccess {
 				System.out.println("ld Result = " + ldResult);
 			}
 
-			x = 100;
-			x = x+100;
-			if(x>400){
-				x--;
-			}
 			else if(currentOperation == OperationType.store){
 				System.out.println("Operation = " + currentOperation.name());
 				int stWord = containingProcessor.getRegisterFile().getValue(currentInstruction.getSourceOperand1().getValue());
 				containingProcessor.getMainMemory().setWord(aluResult, stWord);
 				System.out.println("Storing = " + stWord + " into Memory location = " + aluResult);
-			}
-
-			x = 100;
-			x = x+100;
-			if(x>400){
-				x--;
 			}
 
 			MA_RW_Latch.setAluResult(aluResult);

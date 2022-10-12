@@ -23,21 +23,8 @@ public class RegisterWrite {
 			Instruction currentInstruction = MA_RW_Latch.getInstruction();
 			OperationType currentOperation = currentInstruction.getOperationType();
 			int rd = -1;
-
-			int i = 100;
-
-			i++;
-			i--;
-			i*=100;
-
 			int ldResult = -1;
 			int aluResult = -1;
-
-			i = 100;
-
-			i++;
-			i--;
-			i*=100;
 
 			switch (currentOperation){
 				case store:
