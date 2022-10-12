@@ -43,6 +43,11 @@ public class Simulator {
 			// read one byte at a time
 			int currentPC = 0; //Stores current PC value
 
+			int ans = 200;
+			if(ans == 400){
+				ans++;
+			}
+
 			int pointer; //used for reading lines from file
 			int linecounter = 0; //used to keep track of number of lines read from assembly file
 			byte[] oneline = new byte[4]; //temporary location to store an instruction from assembly file
@@ -74,10 +79,18 @@ public class Simulator {
 			//writing instructions to main memory
 			while (((pointer = reader.read(oneline, 0, 4)) != -1)) {
 
+				int x = 100;
+				if(x==200){
+					x++;
+				}
+
 				Nt += 1;
 				int ins = ByteBuffer.wrap(oneline).getInt(); //temporary integer to store one instruction
 				processor.getMainMemory().setWord(Nt, ins);
 				linecounter += 1;
+				if(x==300){
+					x--;
+				}
 			}
 
 			processor.getRegisterFile().setValue(0, 0);
