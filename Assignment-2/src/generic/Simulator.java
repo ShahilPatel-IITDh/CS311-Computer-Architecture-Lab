@@ -60,9 +60,9 @@ public class Simulator {
 			//4. assemble one instruction at a time, and write to the file
 			for (Instruction current_ins : ParsedProgram.code) {
 				String binary_ins = "";
-				boolean r3_type = false;
-				boolean r2i_type = false;
-				boolean ri_type = false;
+				boolean r3_type = false; //r3_type for normal instructions without immediate
+				boolean r2i_type = false; //r2 when input has immediate value
+				boolean ri_type = false; //ri only for end instructions
 				String opCode;
 				Instruction.OperationType ins_string = current_ins.getOperationType();
 				switch (ins_string.name()) {
@@ -223,6 +223,7 @@ public class Simulator {
 						
 				}
 				if (r3_type) {
+					//binary_ins is a string = concatenation of opcode + rs1 + rs2 + rd + unused bits
 					binary_ins += opCode;
 					Operand rs1 = current_ins.getSourceOperand1();
 					Operand rs2 = current_ins.getSourceOperand2();
@@ -231,7 +232,8 @@ public class Simulator {
 					String rd_value = toBinary(rd, 5);
 					String rs1_value = toBinary(rs1, 5);
 					String rs2_value = toBinary(rs2, 5);
-					String unused_bits = toBinaryConv(0, 12);
+					String unused_bits = toBinaryConv(0, 12); //as there are no immediate value we
+					//assign 0s to all the 12 unused bits.
 
 					binary_ins += (rs1_value + rs2_value + rd_value + unused_bits);
 				}
@@ -246,15 +248,22 @@ public class Simulator {
 					String imm_value;
 					String rs2_value;
 					String rd_value;
+
+					//if the instruction is branch
+					//syntax of branch in ToyRISC: beq %x6, %x3, <branchName>
+					//11001-beq; 11010-bne; 11011-bne; 11100-bgt
 					if (opCode.equals("11001") || opCode.equals("11010") || opCode.equals("11011") || opCode.equals("11100")) {
 						rs2_value = toBinary(rs2, 5);
 						imm_value = toBinary(rd, 5);
 						assert imm_value != null;
+						//imm_value is a binary string of length 5, so parseInt will convert binary to Integer and assign the value to imm_value_int
 						int imm_value_int = Integer.parseInt(imm_value, 2) - pc;
 						String imm_temp = toBinaryConv(imm_value_int, 17);
 						String imm_value2 = imm_temp.substring(imm_temp.length() - 17);
 						binary_ins += (rs1_value + rs2_value + imm_value2);
 					}
+
+					//if instructions in load or store
 					else{
 						rs2_value = toBinary(rs2, 17);
 						rd_value = toBinary(rd, 5);
@@ -265,7 +274,8 @@ public class Simulator {
 					binary_ins += opCode;
 					Operand rd = current_ins.getDestinationOperand();
 					int pc = current_ins.getProgramCounter();
-
+					
+					//if instruction is jmp in ToyRISC (branch in SimpleRISC)
 					if (opCode.equals("11000")) {
 						String unused_bits = toBinaryConv(0, 5);
 						String rd_value = toBinary(rd, 5);
@@ -275,6 +285,8 @@ public class Simulator {
 						String rd_value2 = rd_temp.substring(rd_temp.length() - 22);
 						binary_ins += (unused_bits + rd_value2);
 					}
+
+					//if Instruction is end
 					else if (opCode.equals("11101")) {
 						String unused_bits = toBinaryConv(0, 27);
 						binary_ins += (unused_bits);
