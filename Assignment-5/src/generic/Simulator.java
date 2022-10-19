@@ -7,12 +7,13 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import generic.Statistics;
 
 public class Simulator {
 		
 	static Processor processor;
 	static boolean simulationComplete;
+	
+	//As mentioned in PDF add EventQueue eventQueue
 	static EventQueue eventQueue;
 	public static int noOfInstructions;
 	
@@ -20,7 +21,10 @@ public class Simulator {
 	{
 		Simulator.processor = p;
 		loadProgram(assemblyProgramFile);
+
+		//adding eventQueue to constructor.
 		eventQueue = new EventQueue();
+
 		noOfInstructions = 0;
 		simulationComplete = false;
 	}
@@ -53,6 +57,7 @@ public class Simulator {
 			while (true) {
 				if(linecounter >= currentPC)
 					break;
+
 				ch = reader.read(oneline, 0, 4);
 				Nd += 1;
 				int num = ByteBuffer.wrap(oneline).getInt(); //temporary integer to store one integer of global data
@@ -81,10 +86,12 @@ public class Simulator {
 		}
 	}
 
+	//add the function as mentioned in Question
 	public static EventQueue getEventQueue()
 	{
 		return eventQueue;
 	}
+
 	public static void setNoOfInstructions(int no) { noOfInstructions = no; }
 	public static int getNoOfInstructions() {return noOfInstructions; }
 	
@@ -99,11 +106,15 @@ public class Simulator {
 			processor.getRWUnit().performRW();
 			processor.getMAUnit().performMA();
 			processor.getEXUnit().performEX();
+
+			//added as mentioned in PDF
 			eventQueue.processEvents();
+
 			processor.getOFUnit().performOF();
 			processor.getIFUnit().performIF();
 			Clock.incrementClock();
-			System.out.println("****************************************");
+			// System.out.println("****************************************");
+			
 			noOfCycles += 1;
 		}
 		Statistics.setNumberOfInstructions(noOfInstructions);
