@@ -26,7 +26,7 @@ check:
 loop:
 	beq %x5, %x6, check
 	load %x5, $a, %x7
-	addi %x5, 1, %9
+	addi %x5, 1, %x9
 	load %x9, $a, %x8
 	blt %x7, %x8, interchange
 	jmp lin
