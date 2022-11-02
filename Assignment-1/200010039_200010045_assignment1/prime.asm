@@ -22,7 +22,7 @@ prime:
 	addi %x0, 1, %x10
 	end
 success:
-	subi %x0, 1, %x10
+	addi %x0, 1, %x10
 	end
 terminate:
 	subi %x0, 1, %x10
