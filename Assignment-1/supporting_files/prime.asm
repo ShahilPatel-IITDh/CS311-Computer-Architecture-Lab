@@ -16,14 +16,13 @@ loop:
 	sub %x5, %x3, %x6
 	beq %x6, %x0, success
 	addi %x4, 1, %x4
-	subi %x5, %x5, %x5
+	sub %x5, %x5, %x5
 	jmp loop
+	
 prime:
 	addi %x0, 1, %x10
 	end
-success:
-	subi %x0, 1, %x10
-	end
+
 terminate:
 	subi %x0, 1, %x10
 	end
