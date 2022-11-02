@@ -9,6 +9,7 @@ public class Cache implements Element {
     Processor containingProcessor;
     int cacheSize;
     int cacheLatency;
+    //array of CacheLine initiated
     CacheLine[] actualCache;
     int noOfLines;
     int noOfSets;
@@ -20,29 +21,47 @@ public class Cache implements Element {
     public Cache(Processor processor, int size){
         this.containingProcessor = processor;
         this.cacheSize = size;
+        //No of Lines = size / line size
         this.noOfLines = size / 4;
+        //Associativity = 2
+        //hence no. of sets = no of line / associativity
         this.noOfSets = noOfLines / 2;
 
         switch(size){
-            case 8:
+            // case 8:
+            //     cacheLatency = 1;
+            //     break;
+            // case 32:
+            //     cacheLatency = 2;
+            //     break;
+            // case 128:
+            //     cacheLatency = 4;
+            //     break;
+            // case 1024:
+            //     cacheLatency = 8;
+            //     break;
+            case 16:
                 cacheLatency = 1;
                 break;
-            case 32:
+            case 128:
                 cacheLatency = 2;
                 break;
-            case 128:
-                cacheLatency = 4;
+            case 512:
+                cacheLatency = 3;
                 break;
             case 1024:
-                cacheLatency = 8;
+                cacheLatency = 4;
                 break;
         }
         actualCache = new CacheLine[noOfLines];
-        for(int i = 0; i < noOfLines; i++)
+        for(int i = 0; i < noOfLines; i++){
             actualCache[i] = new CacheLine();
+        }
     }
 
-    public int getCacheLatency() { return cacheLatency; }
+    public int getCacheLatency() {
+        return cacheLatency;
+    }
 
     public static String toBinary(int x, int len){
         if (len > 0) {
@@ -92,10 +111,11 @@ public class Cache implements Element {
             cacheWrite(cacheMissAddress, writeData, cacheMissElement);
         }
     }
-
+    //the function as specified in tips of Assignment-6
     public void cacheRead(int address, Element requestingElement){
         String addressString = toBinary(address, 32);
         int cacheAddress;
+        //take indexBits log of 2
         int indexBits = (int) (Math.log(noOfLines) / Math.log(2));
         if(indexBits == 0) {
             cacheAddress = 0;

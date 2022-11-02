@@ -12,13 +12,12 @@ public class CacheLine {
     public void setData(int newData){
         this.data = newData;
     }
+    public int getData() {
+        return this.data;
+    }
 
     public void setTag(int newTag){
         this.tag = newTag;
-    }
-
-    public int getData() {
-        return this.data;
     }
 
     public int getTag() {
