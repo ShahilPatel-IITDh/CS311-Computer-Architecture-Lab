@@ -257,12 +257,6 @@ public class Execute {
 				EX_MA_Latch.setAluResult(aluResult);
 				EX_MA_Latch.setInstruction(currentInstruction);
 				EX_MA_Latch.setMA_enable(true);
-
-				/*if(aluResult != -1)
-					System.out.println("\nEX Stage: " + "Current PC:" + currentPC + " rs1:" + sourceOperand1 + " rs2:" + sourceOperand2 + " Alu:" + aluResult);
-				else
-					System.out.println("\nEX Stage: " + "Current PC:" + currentPC + " rs1:" + sourceOperand1 + " rs2:" + sourceOperand2);
-				*/
 			}
 		}
 	}

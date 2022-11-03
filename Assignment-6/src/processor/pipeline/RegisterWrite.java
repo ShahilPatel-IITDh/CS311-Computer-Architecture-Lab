@@ -58,18 +58,6 @@ public class RegisterWrite {
 			if(currentOperation != OperationType.end){
 				IF_EnableLatch.setIF_enable(true);
 			}
-
-			/*if(rd != -1){
-				if(ldResult != -1)
-					System.out.println("\nRW Stage " + "Current PC: " + currentPC +" Storing = " + ldResult + " at register = " + rd);
-				else
-					System.out.println("\nRW Stage " + "Current PC: " + currentPC +" Storing = " + aluResult + " at register = " + rd);
-			}
-			else{
-				System.out.println("\nRW Stage " + "Current PC: " + currentPC);
-			}
-			*/
 		}
 	}
-
 }

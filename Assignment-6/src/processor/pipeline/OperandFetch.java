@@ -175,15 +175,6 @@ public class OperandFetch {
 				returnValue = false;
 			}
 		}
-		/*System.out.println("\nConflict Checking");
-		if(ex_rd != -5)
-			System.out.println("EX rd = " + ex_rd);
-		if(ma_rd != -5)
-			System.out.println("MA rd = " + ma_rd);
-		if(rw_rd != -5)
-			System.out.println("RW rd = " + rw_rd);
-		System.out.println("rs1 = " + rs1);
-		System.out.println("rs2 = " + rs2);*/
 		return returnValue;
 	}
 
@@ -349,12 +340,6 @@ public class OperandFetch {
 					if (!OF_EX_Latch.isEX_Locked()) {
 						IF_OF_Latch.setOF_enable(false);
 					}
-
-				/*if(immediate != -1)
-					System.out.println("\nOF Stage" + " Current PC:" + currentPC + " Instruction:" + binaryInstruction + " rs1:" + registerSource1 + " rs2:" + registerSource2 + " rd:" + registerDestination + " imm:" + immediate);
-				else
-					System.out.println("\nOF Stage" + " Instruction:" + binaryInstruction + " rs1:" + registerSource1 + " rs2: " + registerSource2 + " rd:" + registerDestination);
-				*/
 				}
 			}
 		}
