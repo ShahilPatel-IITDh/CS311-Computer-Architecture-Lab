@@ -1,0 +1,3 @@
+Number of instructions executed = 78
+Number of cycles taken = 1630
+IPC = 0.047852762
