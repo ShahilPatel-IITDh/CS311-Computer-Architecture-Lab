@@ -55,7 +55,7 @@ public class Processor {
 		RWUnit = new RegisterWrite(this, MA_RW_Latch, IF_EnableLatch);
 
 		L1iCache = new Cache(this, 1024);
-		L1dCache = new Cache(this, 1024);
+		L1dCache = new Cache(this, 128);
 	}
 	
 	public void printState(int memoryStartingAddress, int memoryEndingAddress)
