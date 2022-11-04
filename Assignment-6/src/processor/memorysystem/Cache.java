@@ -9,14 +9,16 @@ public class Cache implements Element {
     Processor containingProcessor;
     int cacheSize;
     int cacheLatency;
-    //array of CacheLine initiated
-    CacheLine[] actualCache;
-    int noOfLines;
-    int noOfSets;
+
     int cacheMissAddress;
     Element cacheMissElement;
     Boolean isRead;
     int writeData;
+
+    //array of CacheLine initiated
+    CacheLine[] actualCache;
+    int noOfLines;
+    int noOfSets;
 
     public Cache(Processor processor, int size){
         this.containingProcessor = processor;
@@ -59,9 +61,6 @@ public class Cache implements Element {
         }
     }
 
-    public int getCacheLatency() {
-        return cacheLatency;
-    }
 
     public static String toBinary(int x, int len){
         if (len > 0) {
@@ -142,9 +141,11 @@ public class Cache implements Element {
     }
 
     public void cacheWrite(int address, int value, Element requestingElement){
-        String addressString = toBinary(address, 32);
         int cacheAddress;
+        String addressString = toBinary(address, 32);
+        
         int indexBits = (int) (Math.log(noOfLines) / Math.log(2));
+        
         if(indexBits == 0){
             cacheAddress = 0;
         }
@@ -152,7 +153,9 @@ public class Cache implements Element {
             assert addressString != null;
             cacheAddress = Integer.parseInt(addressString.substring((32 - indexBits), 32), 2);
         }
+
         int cacheTag = actualCache[cacheAddress].getTag();
+        
         if(cacheTag == address){
             actualCache[cacheAddress].setData(value);
             Simulator.getEventQueue().addEvent(
@@ -174,16 +177,22 @@ public class Cache implements Element {
         }
     }
 
+    public int getCacheLatency() {
+        return cacheLatency;
+    }
+
     @Override
     public void handleEvent(Event e) {
-        if(e.getEventType() == Event.EventType.MemoryRead){
-            MemoryReadEvent event = (MemoryReadEvent) e;
-            cacheRead(event.getAddressToReadFrom(), event.getRequestingElement());
-        }
-        else if(e.getEventType() == Event.EventType.MemoryResponse){
+        
+        if(e.getEventType() == Event.EventType.MemoryResponse){
             MemoryResponseEvent event = (MemoryResponseEvent) e;
             handleResponse(event.getValue());
         }
+        else if(e.getEventType() == Event.EventType.MemoryRead){
+            MemoryReadEvent event = (MemoryReadEvent) e;
+            cacheRead(event.getAddressToReadFrom(), event.getRequestingElement());
+        }
+
         else if(e.getEventType() == Event.EventType.MemoryWrite){
             MemoryWriteEvent event = (MemoryWriteEvent) e;
             cacheWrite(event.getAddressToWriteTo(), event.getValue(), event.getRequestingElement());
