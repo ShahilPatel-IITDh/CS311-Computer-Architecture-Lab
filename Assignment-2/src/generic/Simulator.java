@@ -13,10 +13,11 @@ public class Simulator {
 
 	static FileInputStream inputcodeStream = null;
 
-	public static String toBinaryConv(int x, int len){
-		if (len > 0) {
-			return String.format("%" + len + "s",
-					Integer.toBinaryString(x)).replace(" ", "0");
+	public static String toBinaryConv(int x, int leng){
+		if (leng > 0) {
+			return String.format("%" + leng + "s",
+			// Replacing " " to "0"		
+			Integer.toBinaryString(x)).replace(" ", "0");
 		}
 		return null;
 	}
@@ -64,117 +65,140 @@ public class Simulator {
 				boolean r2i_type = false; //r2 when input has immediate value
 				boolean ri_type = false; //ri only for end instructions
 				String opCode;
+				String opCode_alt;
 				Instruction.OperationType ins_string = current_ins.getOperationType();
 				switch (ins_string.name()) {
 
 					case "add":
 						r3_type = true;
 						opCode = "00000";
+						opCode_alt = "00000";
 						break;
 					
 					case "sub":
 						r3_type = true;
 						opCode = "00010";
+						opCode_alt = "00000";
 						break;
 					
 					case "mul":
 						r3_type = true;
 						opCode = "00100";
+						opCode_alt = "00000";
 						break;
 					
 					case "div":
 						r3_type = true;
 						opCode = "00110";
+						opCode_alt = "00000";
 						break;
 					
 					case "and":
 						r3_type = true;
 						opCode = "01000";
+						opCode_alt = "00000";
 						break;
 					
 					case "or":
 						r3_type = true;
 						opCode = "01010";
+						opCode_alt = "00000";
 						break;
 					
 					case "xor":
 						r3_type = true;
 						opCode = "01100";
+						opCode_alt = "00000";
 						break;
 
 					case "addi":
 						r2i_type = true;
 						opCode = "00001";
+						opCode_alt = "00000";
 						break;
 					
 					case "subi":
 						r2i_type = true;
 						opCode = "00011";
+						opCode_alt = "00000";
 						break;
 
 					case "muli":
 						r2i_type = true;
 						opCode = "00101";
+						opCode_alt = "00000";
 						break;
 
 					case "divi":
 						r2i_type = true;
 						opCode = "00111";
+						opCode_alt = "00000";
 						break;
 
 					case "andi":
 						r2i_type = true;
 						opCode = "01001";
+						opCode_alt = "00000";
 						break;	
 					
 					case "ori":
 						r2i_type = true;
 						opCode = "01011";
+						opCode_alt = "00000";
 						break;
 
 					case "xori":
 						r2i_type = true;
 						opCode = "01101";
+						opCode_alt = "00000";
 						break;
 
 					case "slt":
 						r3_type = true;
 						opCode = "01110";
+						opCode_alt = "00000";
 						break;
 
 					case "slti":
 						r2i_type = true;
 						opCode = "01111";
+						opCode_alt = "00000";
 						break;
 
 					case "sll":
 						r3_type = true;
 						opCode = "10000";
+						opCode_alt = "00000";
 						break;
 
 					case "slli":
 						r2i_type = true;
 						opCode = "10001";
+						opCode_alt = "00000";
 						break;
 
 					case "srl":
 						r3_type = true;
 						opCode = "10010";
+						opCode_alt = "00000";
 						break;
 
 					case "srli":
 						r2i_type = true;
 						opCode = "10011";
+						opCode_alt = "00000";
 						break;
 
 					case "sra":
 						r3_type = true;
 						opCode = "10100";
+						opCode_alt = "00000";
 						break;
 
 					case "srai":
 						r2i_type = true;
 						opCode = "10101";
+						opCode_alt = "00000";
 						break;
 
 					case "load":
@@ -185,40 +209,48 @@ public class Simulator {
 					case "store":
 						r2i_type = true;
 						opCode = "10111";
+						opCode_alt = "00000";
 						break;
 
 					case "jmp":
 						ri_type = true;
 						opCode = "11000";
+						opCode_alt = "00000";
 						break;
 
 					case "beq":
 						r2i_type = true;
 						opCode = "11001";
+						opCode_alt = "00000";
 						break;
 
 					case "bne":
 						r2i_type = true;
 						opCode = "11010";
+						opCode_alt = "00000";
 						break;
 
 					case "blt":
 						r2i_type = true;
 						opCode = "11011";
+						opCode_alt = "00000";
 						break;
 
 					case "bgt":
 						r2i_type = true;
 						opCode = "11100";
+						opCode_alt = "00000";
 						break;
 
 					case "end":
 						ri_type = true;
 						opCode = "11101";
+						opCode_alt = "00000";
 						break;
 
 					default:
 						opCode = "";
+						opCode_alt = "00000";
 						break;
 						
 				}
@@ -248,6 +280,7 @@ public class Simulator {
 					String imm_value;
 					String rs2_value;
 					String rd_value;
+					String temp_value;
 
 					//if the instruction is branch
 					//syntax of branch in ToyRISC: beq %x6, %x3, <branchName>
@@ -259,6 +292,7 @@ public class Simulator {
 						//imm_value is a binary string of length 5, so parseInt will convert binary to Integer and assign the value to imm_value_int
 						int imm_value_int = Integer.parseInt(imm_value, 2) - pc;
 						String imm_temp = toBinaryConv(imm_value_int, 17);
+						temp_value = "Check";
 						String imm_value2 = imm_temp.substring(imm_temp.length() - 17);
 						binary_ins += (rs1_value + rs2_value + imm_value2);
 					}
@@ -267,12 +301,14 @@ public class Simulator {
 					else{
 						rs2_value = toBinary(rs2, 17);
 						rd_value = toBinary(rd, 5);
+						temp_value = "Check";
 						binary_ins += (rs1_value + rd_value + rs2_value);
 					}
 				}
 				else if (ri_type) {
 					binary_ins += opCode;
 					Operand rd = current_ins.getDestinationOperand();
+					temp_value = "Check";
 					int pc = current_ins.getProgramCounter();
 					
 					//if instruction is jmp in ToyRISC (branch in SimpleRISC)
@@ -282,6 +318,7 @@ public class Simulator {
 						assert rd_value != null;
 						int rd_value_int = Integer.parseInt(rd_value, 2) - pc;
 						String rd_temp = toBinaryConv(rd_value_int, 22);
+						temp_value = "Check";
 						String rd_value2 = rd_temp.substring(rd_temp.length() - 22);
 						binary_ins += (unused_bits + rd_value2);
 					}
@@ -289,6 +326,7 @@ public class Simulator {
 					//if Instruction is end
 					else if (opCode.equals("11101")) {
 						String unused_bits = toBinaryConv(0, 27);
+						temp_value = "Check";
 						binary_ins += (unused_bits);
 					}
 				}
@@ -297,6 +335,7 @@ public class Simulator {
 				}
 				int int_ins = (int) Long.parseLong(binary_ins, 2);
 				byte[] instBinary = ByteBuffer.allocate(4).putInt(int_ins).array();
+				temp_value = "Check";
 				outputcodeStream.write(instBinary);
 			}
 			//5. close the file
