@@ -32,7 +32,8 @@ public class Execute {
 	public void performEX()
 	{
 		Instruction cmd = null;
-
+		
+		//Check if the EX Stage is locked or not, if locked then set the MA stage Lock to true and disable the lock in EX stage.
 		if(OF_EX_Latch.isEX_Locked()){
 			EX_MA_Latch.setMA_Lock(true);
 			OF_EX_Latch.setEX_Lock(false);
@@ -68,6 +69,7 @@ public class Execute {
 			BranchInstructions.add("bgt");
 			BranchInstructions.add("end");
 
+			//To handle the control hazard we check if the current operation is branch, if it is a branch instruction then disable the IF, OF and EX stage (control interlocks)
 			if(BranchInstructions.contains(currentOperation.name())){
 
 				Statistics.setNumberOfBranchesTaken(Statistics.getNumberOfBranchesTaken() + 2);
@@ -408,6 +410,7 @@ public class Execute {
 
 			EX_MA_Latch.setMA_enable(true);
 
+			//Alu result will be -1 if the instruction was branch
 			if(aluResult != -1)
 				System.out.println("\nEX Stage: " + "Current PC: " + currentPC + " rs1: " + sourceOperand1 + " rs2: " + sourceOperand2 + " Alu Result: " + aluResult);
 			else
