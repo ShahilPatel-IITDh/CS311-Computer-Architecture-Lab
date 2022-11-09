@@ -39,6 +39,8 @@ public class InstructionFetch implements Element {
 				int currentPC = containingProcessor.getRegisterFile().getProgramCounter();
 				System.out.println("\nIF:" + " Current PC:" + currentPC);
 				Simulator.setNoOfInstructions( Simulator.getNoOfInstructions() + 1 );
+				
+				//get Event from Event Queue and add Event to the Simulator
 				Simulator.getEventQueue().addEvent(
 						new MemoryReadEvent(
 								Clock.getCurrentTime() + Configuration.mainMemoryLatency,
@@ -56,11 +58,15 @@ public class InstructionFetch implements Element {
 
 	@Override
 	public void handleEvent(Event e) {
+
+		//If the OF stage is busy then add the instruction to Queue
 		if(IF_OF_Latch.isOF_Busy()) {
 			System.out.println("IF_OF Latch is Busy");
 			e.setEventTime(Clock.getCurrentTime() + 1);
 			Simulator.getEventQueue().addEvent(e);
 		}
+
+		// If the event is a Memory Response
 		else if (e.getEventType() == Event.EventType.MemoryResponse){
 			MemoryResponseEvent event = (MemoryResponseEvent) e ;
 			System.out.println("IF Event Handled");

@@ -19,7 +19,8 @@ public class RegisterWrite {
 	}
 	
 	public void performRW()
-	{
+	{	
+		//If the RW stage is already locked then set the lock to false
 		if(MA_RW_Latch.isRW_Locked()){
 			MA_RW_Latch.setRW_Lock(false);
 		}

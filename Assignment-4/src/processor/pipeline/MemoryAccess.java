@@ -20,6 +20,7 @@ public class MemoryAccess {
 	
 	public void performMA()
 	{
+		//If the MA is stage is locked, set the lock of RW stage to true, and set convert the instruction to null (nop), and then unlock the ma stage
 		if(EX_MA_Latch.isMA_Locked()){
 
 			MA_RW_Latch.setRW_Lock(true);
@@ -36,14 +37,10 @@ public class MemoryAccess {
 
 			int aluResult = EX_MA_Latch.getAluResult();
 
-			int alr;
-			int CP;
-			alr = aluResult;
-
+			
 			OperationType currentOperation = currentInstruction.getOperationType();
 			int currentPC = currentInstruction.getProgramCounter();
 			
-			CP = currentPC;
 			if(currentOperation == OperationType.load){
 
 				int ldResult = containingProcessor.getMainMemory().getWord(aluResult);
