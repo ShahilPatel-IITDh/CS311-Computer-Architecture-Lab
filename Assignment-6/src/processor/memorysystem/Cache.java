@@ -1,4 +1,5 @@
 package processor.memorysystem;
+
 import configuration.Configuration;
 import generic.*;
 import processor.Clock;
@@ -30,19 +31,7 @@ public class Cache implements Element {
         this.noOfSets = noOfLines / 2;
 
         switch(size){
-            // case 8:
-            //     cacheLatency = 1;
-            //     break;
-            // case 32:
-            //     cacheLatency = 2;
-            //     break;
-            // case 128:
-            //     cacheLatency = 4;
-            //     break;
-            // case 1024:
-            //     cacheLatency = 8;
-            //     break;
-            case 16:
+           case 16:
                 cacheLatency = 1;
                 break;
             case 128:
